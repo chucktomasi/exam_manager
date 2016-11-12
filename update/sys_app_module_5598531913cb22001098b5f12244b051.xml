@@ -2,7 +2,7 @@
 <record_update sys_domain="global" table="sys_app_module">
     <sys_app_module action="INSERT_OR_UPDATE">
         <active>true</active>
-        <application display_value="Question">9998531913cb22001098b5f12244b04e</application>
+        <application display_value="Exam">1403fd19130b22001098b5f12244b07e</application>
         <assessment/>
         <content_page/>
         <device_type/>
@@ -15,11 +15,11 @@
         <mobile_title>Questions</mobile_title>
         <mobile_view_name>Mobile</mobile_view_name>
         <name>x_snc_exam_question</name>
-        <order/>
+        <order>1200</order>
         <override_menu_roles>false</override_menu_roles>
         <query/>
         <report/>
-        <roles>x_snc_exam.user</roles>
+        <roles>x_snc_exam.admin</roles>
         <survey/>
         <survey_overwrite>true</survey_overwrite>
         <sys_class_name>sys_app_module</sys_class_name>
@@ -29,7 +29,7 @@
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>5598531913cb22001098b5f12244b051</sys_id>
-        <sys_mod_count>0</sys_mod_count>
+        <sys_mod_count>3</sys_mod_count>
         <sys_name>Questions</sys_name>
         <sys_overrides/>
         <sys_package display_value="Exam Manager" source="x_snc_exam">1d8ae19913c722001098b5f12244b098</sys_package>
@@ -38,7 +38,7 @@
         <sys_scope display_value="Exam Manager">1d8ae19913c722001098b5f12244b098</sys_scope>
         <sys_update_name>sys_app_module_5598531913cb22001098b5f12244b051</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2016-11-12 01:58:34</sys_updated_on>
+        <sys_updated_on>2016-11-12 22:38:58</sys_updated_on>
         <timeline_page/>
         <title>Questions</title>
         <uncancelable>false</uncancelable>

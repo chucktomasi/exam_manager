@@ -2,9 +2,13 @@
 <database>
     <element label="Group" max_length="40" name="x_snc_exam_group" type="collection">
         <element default="true" label="Active" max_length="40" name="active" type="boolean"/>
-        <element default="javascript:gs.getUserID()" dynamic_default_value="2fd8e97bef3221002841f7f775c0fbc1" label="Name" max_length="100" name="name" type="string" use_dynamic_default="true"/>
+        <element default="javascript:gs.getUserID()" dynamic_default_value="2fd8e97bef3221002841f7f775c0fbc1" label="Instructor" max_length="32" name="instructor" reference="sys_user" reference_qual="active=true^EQ" reference_qual_condition="active=true^EQ" type="reference" use_dynamic_default="true"/>
+        <element label="Name" max_length="100" name="name" type="string"/>
         <element choice="1" default="nothing" label="User delete action" max_length="40" name="user_delete_action" type="choice">
             <choice/>
         </element>
+        <index name="index">
+            <element name="instructor"/>
+        </index>
     </element>
 </database>

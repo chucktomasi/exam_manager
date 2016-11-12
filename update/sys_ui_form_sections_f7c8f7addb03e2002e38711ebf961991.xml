@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+    <sys_ui_form_sections form_id="f7c8f7addb03e2002e38711ebf961991" sys_domain="global" table="x_snc_exam_exam" version="3">
+        <sys_ui_form_section action="INSERT_OR_UPDATE">
+            <position>0</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2016-11-12 22:57:52</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>7fc8f7addb03e2002e38711ebf961991</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_overrides/>
+            <sys_ui_form display_value="x_snc_exam_exam" name="x_snc_exam_exam" sys_domain="global" view="Default view">f7c8f7addb03e2002e38711ebf961991</sys_ui_form>
+            <sys_ui_section caption="NULL" display_value="" name="x_snc_exam_exam" sys_domain="global" view="Default view">d46f6369db03e2002e38711ebf96192f</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2016-11-12 22:57:52</sys_updated_on>
+        </sys_ui_form_section>
+        <sys_ui_form_section action="INSERT_OR_UPDATE">
+            <position>1</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2016-11-12 22:57:52</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>ccd8f7addb03e2002e38711ebf961991</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_overrides/>
+            <sys_ui_form display_value="x_snc_exam_exam" name="x_snc_exam_exam" sys_domain="global" view="Default view">f7c8f7addb03e2002e38711ebf961991</sys_ui_form>
+            <sys_ui_section caption="Q&amp;A" display_value="Q&amp;A" name="x_snc_exam_exam" sys_domain="global" view="Default view">7fc8f7addb03e2002e38711ebf96198f</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2016-11-12 22:57:52</sys_updated_on>
+        </sys_ui_form_section>
+        <sys_ui_form_section action="INSERT_OR_UPDATE">
+            <position>2</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2016-11-12 22:57:52</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>80d8f7addb03e2002e38711ebf961992</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_overrides/>
+            <sys_ui_form display_value="x_snc_exam_exam" name="x_snc_exam_exam" sys_domain="global" view="Default view">f7c8f7addb03e2002e38711ebf961991</sys_ui_form>
+            <sys_ui_section caption="Results" display_value="Results" name="x_snc_exam_exam" sys_domain="global" view="Default view">b3c8f7addb03e2002e38711ebf961990</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2016-11-12 22:57:52</sys_updated_on>
+        </sys_ui_form_section>
+        <sys_ui_form_section action="INSERT_OR_UPDATE">
+            <position>3</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2016-11-12 22:57:52</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>44d8f7addb03e2002e38711ebf961992</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_overrides/>
+            <sys_ui_form display_value="x_snc_exam_exam" name="x_snc_exam_exam" sys_domain="global" view="Default view">f7c8f7addb03e2002e38711ebf961991</sys_ui_form>
+            <sys_ui_section caption="Ready" display_value="Ready" name="x_snc_exam_exam" sys_domain="global" view="Default view">f7c8f7addb03e2002e38711ebf961990</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2016-11-12 22:57:52</sys_updated_on>
+        </sys_ui_form_section>
+        <sys_ui_form_section action="INSERT_OR_UPDATE">
+            <position>4</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2016-11-12 22:57:52</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>08d8f7addb03e2002e38711ebf961992</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_overrides/>
+            <sys_ui_form display_value="x_snc_exam_exam" name="x_snc_exam_exam" sys_domain="global" view="Default view">f7c8f7addb03e2002e38711ebf961991</sys_ui_form>
+            <sys_ui_section caption="Pass" display_value="Pass" name="x_snc_exam_exam" sys_domain="global" view="Default view">3fc8f7addb03e2002e38711ebf961990</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2016-11-12 22:57:52</sys_updated_on>
+        </sys_ui_form_section>
+        <sys_ui_form_section action="INSERT_OR_UPDATE">
+            <position>5</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2016-11-12 22:57:52</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>c8d8f7addb03e2002e38711ebf961992</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_overrides/>
+            <sys_ui_form display_value="x_snc_exam_exam" name="x_snc_exam_exam" sys_domain="global" view="Default view">f7c8f7addb03e2002e38711ebf961991</sys_ui_form>
+            <sys_ui_section caption="Fail" display_value="Fail" name="x_snc_exam_exam" sys_domain="global" view="Default view">73c8f7addb03e2002e38711ebf961991</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2016-11-12 22:57:52</sys_updated_on>
+        </sys_ui_form_section>
+        <sys_ui_form action="INSERT_OR_UPDATE">
+            <name>x_snc_exam_exam</name>
+            <roles/>
+            <sys_class_name>sys_ui_form</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2016-11-12 22:57:52</sys_created_on>
+            <sys_customer_update>true</sys_customer_update>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>f7c8f7addb03e2002e38711ebf961991</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>x_snc_exam_exam</sys_name>
+            <sys_overrides/>
+            <sys_package display_value="Exam Manager" source="x_snc_exam">1d8ae19913c722001098b5f12244b098</sys_package>
+            <sys_policy/>
+            <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+            <sys_scope display_value="Exam Manager">1d8ae19913c722001098b5f12244b098</sys_scope>
+            <sys_update_name>sys_ui_form_sections_f7c8f7addb03e2002e38711ebf961991</sys_update_name>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2016-11-12 22:57:52</sys_updated_on>
+            <sys_user/>
+            <view display_value="Default view" name="NULL">Default view</view>
+            <view_name/>
+        </sys_ui_form>
+    </sys_ui_form_sections>
+</record_update>

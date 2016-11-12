@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <database>
-    <element label="Group member" max_length="40" name="x_snc_exam_user_grmember" type="collection">
-        <element label="Group" max_length="32" name="group" reference="x_snc_exam_group" type="reference"/>
-        <element label="User" max_length="32" name="user" reference="sys_user" type="reference"/>
+    <element label="Exam User Grmember" max_length="40" name="x_snc_exam_user_grmember" type="collection">
+        <element label="Group" max_length="32" name="group" reference="x_snc_exam_group" reference_qual="active=true^EQ" reference_qual_condition="active=true^EQ" type="reference"/>
+        <element label="User" max_length="32" name="user" reference="sys_user" reference_qual="active=true^EQ" reference_qual_condition="active=true^EQ" type="reference"/>
         <index name="index">
             <element name="user"/>
         </index>

@@ -11,9 +11,9 @@
             <plural>States</plural>
             <sys_class_name>sys_documentation</sys_class_name>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2016-11-12 02:11:55</sys_created_on>
-            <sys_customer_update>true</sys_customer_update>
-            <sys_id>7cab9f5913cb22001098b5f12244b046</sys_id>
+            <sys_created_on>2016-11-12 22:26:33</sys_created_on>
+            <sys_customer_update>false</sys_customer_update>
+            <sys_id>d9a1bbe9db03e2002e38711ebf961929</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_name>State</sys_name>
             <sys_package display_value="Exam Manager" source="x_snc_exam">1d8ae19913c722001098b5f12244b098</sys_package>
@@ -22,7 +22,7 @@
             <sys_scope display_value="Exam Manager">1d8ae19913c722001098b5f12244b098</sys_scope>
             <sys_update_name>sys_documentation_x_snc_exam_score_state_en</sys_update_name>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2016-11-12 02:11:55</sys_updated_on>
+            <sys_updated_on>2016-11-12 22:26:33</sys_updated_on>
             <url/>
             <url_target/>
         </sys_documentation>
