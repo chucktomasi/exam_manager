@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database>
+    <element label="Answer" max_length="40" name="x_snc_exam_answer" type="collection">
+        <element default="true" label="Active" max_length="40" name="active" type="boolean"/>
+        <element label="Correct" max_length="40" name="correct" type="boolean"/>
+        <element label="Order" max_length="40" name="order" type="integer"/>
+        <element label="Question" max_length="32" name="question" reference="x_snc_exam_question" type="reference"/>
+        <element display="true" label="Text" max_length="4000" name="text" type="string"/>
+        <index name="index">
+            <element name="question"/>
+        </index>
+    </element>
+</database>

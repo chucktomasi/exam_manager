@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database>
+    <element label="Category" max_length="40" name="x_snc_exam_question_category" type="collection">
+        <element label="Exam" max_length="32" name="exam" reference="x_snc_exam_exam" type="reference"/>
+        <element display="true" label="Name" max_length="40" name="name" type="string"/>
+        <index name="index">
+            <element name="exam"/>
+        </index>
+    </element>
+</database>

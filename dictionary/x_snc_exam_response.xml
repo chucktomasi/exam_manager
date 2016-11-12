@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database>
+    <element label="Response" max_length="40" name="x_snc_exam_response" type="collection">
+        <element label="Answer" max_length="32" name="answer" reference="x_snc_exam_answer" type="reference"/>
+        <element label="Answer map" max_length="1000" name="answer_map" type="string"/>
+        <element label="Question" max_length="32" name="question" reference="x_snc_exam_question" type="reference"/>
+        <element label="Score" max_length="32" name="score" reference="x_snc_exam_score" type="reference"/>
+        <element label="Sequence" max_length="40" name="sequence" type="integer"/>
+        <index name="index">
+            <element name="score"/>
+        </index>
+        <index name="index2">
+            <element name="answer"/>
+        </index>
+        <index name="index3">
+            <element name="question"/>
+        </index>
+    </element>
+</database>

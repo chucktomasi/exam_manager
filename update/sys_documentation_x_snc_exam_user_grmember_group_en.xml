@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+    <sys_documentation element="group" label="Group" language="en" table="x_snc_exam_user_grmember">
+        <sys_documentation action="INSERT_OR_UPDATE">
+            <element>group</element>
+            <help/>
+            <hint/>
+            <label>Group</label>
+            <language>en</language>
+            <name>x_snc_exam_user_grmember</name>
+            <plural>Groups</plural>
+            <sys_class_name>sys_documentation</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2016-11-12 02:28:23</sys_created_on>
+            <sys_customer_update>true</sys_customer_update>
+            <sys_id>0e6f5fd913cb22001098b5f12244b0e0</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>Group</sys_name>
+            <sys_package display_value="Exam Manager" source="x_snc_exam">1d8ae19913c722001098b5f12244b098</sys_package>
+            <sys_policy/>
+            <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+            <sys_scope display_value="Exam Manager">1d8ae19913c722001098b5f12244b098</sys_scope>
+            <sys_update_name>sys_documentation_x_snc_exam_user_grmember_group_en</sys_update_name>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2016-11-12 02:28:23</sys_updated_on>
+            <url/>
+            <url_target/>
+        </sys_documentation>
+    </sys_documentation>
+</record_update>
