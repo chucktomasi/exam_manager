@@ -12,7 +12,7 @@
                 <element label="Fail" sequence="1" value="Fail"/>
             </choice>
         </element>
-        <element label="Percent" max_length="40" name="percent" read_only="true" type="percent_complete"/>
+        <element default="0" label="Percent" max_length="40" name="percent" read_only="true" type="percent_complete"/>
         <element label="Possible" max_length="40" name="possible" read_only="true" type="integer"/>
         <element label="Score" max_length="40" name="score" read_only="true" type="integer"/>
         <element choice="1" default="Pending" label="State" max_length="40" name="state" type="choice">

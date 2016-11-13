@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update sys_domain="global" table="sys_script_client">
+    <sys_script_client action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <applies_extended>false</applies_extended>
+        <condition/>
+        <description>Populate the Order field from the automatic calculator</description>
+        <field>active</field>
+        <global>true</global>
+        <messages/>
+        <name>Populate Order</name>
+        <order/>
+        <script><![CDATA[function onLoad() {
+	if (g_form.getValue('order') == '') {
+		g_form.setValue('order', g_scratchpad.order);
+	}
+			 
+}]]></script>
+        <sys_class_name>sys_script_client</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2016-11-13 22:45:20</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>128fb44edb87e2002e38711ebf9619b1</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Populate Order</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Exam Manager" source="x_snc_exam">1d8ae19913c722001098b5f12244b098</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Exam Manager">1d8ae19913c722001098b5f12244b098</sys_scope>
+        <sys_update_name>sys_script_client_128fb44edb87e2002e38711ebf9619b1</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2016-11-13 22:45:20</sys_updated_on>
+        <table>x_snc_exam_answer</table>
+        <type>onLoad</type>
+        <ui_type>0</ui_type>
+        <view/>
+    </sys_script_client>
+</record_update>

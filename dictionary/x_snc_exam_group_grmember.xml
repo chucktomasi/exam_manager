@@ -3,7 +3,7 @@
     <element label="Exam Group Grmember" max_length="40" name="x_snc_exam_group_grmember" type="collection">
         <element label="Exam" max_length="32" name="exam" reference="x_snc_exam_exam" reference_qual="active=true^EQ" reference_qual_condition="active=true^EQ" type="reference"/>
         <element label="Group" max_length="32" name="group" reference="x_snc_exam_group" reference_qual="active=true^EQ" reference_qual_condition="active=true^EQ" type="reference"/>
-        <element choice="1" default="Pending" label="State" max_length="40" name="state" type="choice">
+        <element choice="1" choice_field="state" choice_table="x_snc_exam_score" default="Pending" label="State" max_length="40" name="state" type="choice">
             <choice/>
         </element>
         <element attributes="no_truncate=true" label="State details" max_length="1000" name="state_details" type="string"/>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_ui_message">
+    <sys_ui_message action="INSERT_OR_UPDATE">
+        <application/>
+        <key>exam_not_yet_submitted</key>
+        <language>en</language>
+        <message>Your exam has not yet been submitted!</message>
+        <sys_class_name>sys_ui_message</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2016-11-13 23:18:07</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_id>d6074502dbc7e2002e38711ebf9619bb</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>exam_not_yet_submitted</sys_name>
+        <sys_package display_value="Exam Manager" source="x_snc_exam">1d8ae19913c722001098b5f12244b098</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Exam Manager">1d8ae19913c722001098b5f12244b098</sys_scope>
+        <sys_update_name>sys_ui_message_d6074502dbc7e2002e38711ebf9619bb</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2016-11-13 23:18:07</sys_updated_on>
+    </sys_ui_message>
+</record_update>

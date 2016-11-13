@@ -1,0 +1,1460 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_snc_exam.Util</api_name>
+        <client_callable>false</client_callable>
+        <description>A collection of functions to facilitate the Exam Manager app</description>
+        <name>Util</name>
+        <script><![CDATA[var Util = Class.create();
+
+Util.prototype = {
+	
+	initialize: function() {
+		
+		this.examTable          = 'x_snc_exam_exam';
+		this.questionTable      = 'x_snc_exam_question';
+		this.answerTable        = 'x_snc_exam_answer';
+		this.responseTable      = 'x_snc_exam_response';
+		this.scoreTable         = 'x_snc_exam_score';
+		this.groupTable         = 'x_snc_exam_group';
+		this.userGrmemberTable  = 'x_snc_exam_user_grmember';
+		this.examGrmemberTable  = 'x_snc_exam_group_grmember';
+		this.uiPage             = 'take_exam.do';
+	},
+	
+	/*
+ 	* generateUserResponses - create a series of exam responses (questions/answer records) for this user
+ 	*                         Leverages exam parameters: max_questions, randomize
+ 	*                         Saves entries in exam_response
+ 	*
+ 	* @param: scoreRec - which score record to associate these with
+ 	* @return - # of questions written
+ 	* Called from: BR - Generate Responses
+ 	*
+ 	*/
+	generateUserResponses : function(scoreRec) {
+		
+		var quest       = new GlideRecord(this.questionTable);
+		var allQuestObj = []; // List of objects to use
+		var allQuestIdx = []; // Index to shuffle/sort
+		var examRec     = this._getExamRec(scoreRec.exam.sys_id);
+		
+		// Dump Exam Rec Info
+		this._dumpExamRec(examRec);
+		
+		// Start by getting ALL questions
+		this._debug('generateUserResponses(): Getting questions for score_rec=' + scoreRec);
+		quest.addQuery('active', true);
+		quest.addQuery('exam', scoreRec.exam.sys_id);
+		quest.orderBy('order');
+		
+		quest.query();
+		
+		var n = 0;
+		while (quest.next()) {
+			this._debug('--> generateUserResponses(): Pushing: #' + quest.getValue('number') + ' ' + quest.getValue('sys_id') + ' ' + quest.getValue('text'));
+			allQuestIdx.push(n);
+			allQuestObj.push(quest.getValue('sys_id'));
+			++n;
+		}
+		
+		this._debug('generateUserResponses(): allQuestIdx=' + allQuestIdx.join(','));
+		
+		// Scramble the array - always. We'll sort it if the exam says to
+		// Otherwise, we would always get the same first "max_questions" and no randomizing for retakes
+		allQuestIdx = this._shuffle(allQuestIdx);
+		this._debug('generateUserResponses(): shuffled allQuestIdx=' + allQuestIdx.join(','));
+		
+		// Truncate it (if necessary)
+		
+		this._debug('generateUserResponses(): allQuestIdx.length=' + allQuestIdx.length);
+		if (allQuestIdx.length > examRec.max_questions) {
+			allQuestIdx.length = examRec.max_questions;   // If there are more questions than are allowed, truncate
+			this._debug('generateUserResponses(): more questions than needed. Truncating to: ' + allQuestIdx.length);
+		}
+		
+		// Sort if the exam says to
+		if (!examRec.randomize) {
+			allQuestIdx.sort(function(a,b){return a-b;}); // Sort these as numbers, not strings
+			this._debug('generateUserResponses(): sorted allQuestIdx=' + allQuestIdx.join(','));
+		}
+		
+		// Create the response records
+		var resp = new GlideRecord(this.responseTable);
+		
+		for (var i = 0; i < allQuestIdx.length; i++) {
+			
+			resp.newRecord();
+			resp.score    = scoreRec.getValue('sys_id');
+			resp.question = allQuestObj[allQuestIdx[i]];
+			resp.sequence = i + 1;
+			
+			resp.insert();
+			this._debug('generateUserResponses(): created record for question #' + allQuestObj[allQuestIdx[i]]);
+		}
+		
+		return i;
+	},
+	
+	/*
+ 	* getResponses - get an array of response records (objects)
+ 	*
+ 	* @param scoreId - sys_id of the exam_score record (parent of the responses)
+ 	* @uses - this.responseTable
+ 	* @return array of objects (responses to display on the screen.)
+ 	*
+ 	*/
+	getResponses : function(scoreId) {
+		
+		var rGr = new GlideRecord(this.responseTable);
+		var responses = [];
+		
+		rGr.addQuery('score', scoreId);
+		rGr.orderBy('sequence');
+		rGr.query();
+		this._debug('getResponses(): count=' + rGr.getRowCount());
+		
+		while (rGr.next()) {
+			var ro = {};
+			
+			ro.sequence      = rGr.getValue('sequence');
+			ro.sys_id        = rGr.getValue('sys_id');
+			ro.question_text = rGr.question.getDisplayValue();
+			ro.answer_text   = rGr.answer.getDisplayValue();
+			ro.is_correct    = rGr.answer.correct;
+			
+			responses.push(ro);
+		}
+		
+		return responses;
+	},
+	
+	/*
+ 	* deleteUserResponses - remove the responses if a user is no longer taking an exam (removed from m2m)
+ 	*
+ 	* @param score_id - which score record these responses are associated with
+ 	* @return none
+ 	*
+ 	*/
+	deleteUserResponses : function(score_id) {
+		
+		var resp = new GlideRecord(this.responseTable);
+		
+		this._debug('deleteUserResponses(): removing records for id=' + score_id);
+		resp.addQuery('score', score_id);
+		resp.deleteMultiple();
+		
+		this._debug('deleteUserResponses(): responses removed');
+	},
+	
+	/*
+ 	* getNextQuestion - get the next unanswered question (from exam_response)
+ 	*
+ 	* @param: score_id - ID of the user/exam/attempt record the response list is associated with
+ 	* @return - sysid of next unanswered question (-1, all questions answered)
+ 	*
+ 	*/
+	getNextQuestion : function(score_id) {
+		
+		var resp  = new GlideRecord(this.responseTable);
+		
+		this._debug('getNextQuestion(): score_id=' + score_id);
+		resp.addQuery('score', score_id);
+		resp.addNullQuery('answer');
+		resp.orderBy('sequence');
+		resp.query();
+		
+		if (resp.next()) {
+			var retVal = resp.getValue('sys_id');
+			this._debug('getNextQuestion(): unaswered response found. Returning: ' + retVal);
+			return retVal;
+		}
+		
+		this._debug('getNextQuestion(): no unanswered responses found. Returning -1');
+		return -1;
+		
+	},
+	
+	/*
+ 	* getNextAttempt - determine what the next attempt is for the user/exam combination
+ 	*
+ 	* @param exam_id - ID of the exam this user is taking
+ 	* @param user_id - user ID taking this exam
+ 	*
+ 	* @returns integer - attempt number
+ 	*
+ 	*/
+	getNextAttempt : function(exam_id, user_id) {
+		
+		var score       = new GlideRecord(this.scoreTable);
+		var nextAttempt = 2; // Start at 1, so the next attempt is 2
+		
+		this._debug('getNextAttempt(): exam=' + exam_id + ' user=' + user_id);
+		score.addQuery('exam', exam_id);
+		score.addQuery('user', user_id);
+		score.orderByDesc('attempt');
+		score.query();
+		
+		if (score.next() && !JSUtil.nil(score.attempt)) {
+			this._debug('getNextAttempt(): highest seen so far is: ' + score.attempt);
+			nextAttempt = score.attempt + 1;
+			
+			// This is the first
+		} else {
+			this._debug('getNextAttempt(): this is the first attempt');
+			nextAttempt = 1;
+		}
+		
+		this._debug('getNextAttempt(): returning: ' + nextAttempt);
+		
+		return nextAttempt;
+		
+	},
+	
+	/*
+ 	* scoreExam - Review all answers and save the result
+ 	*
+ 	* @param scoreRec - GlideRecord of the exam we want to score
+ 	*
+ 	* @return: final score (count of correct), -1 if exam is not complete
+ 	*
+ 	*/
+	scoreExam : function(scoreRec) {
+		
+		var correct  = 0;
+		var possible = 0;
+		var percent  = 0.0;
+		
+		var resp = new GlideRecord(this.responseTable);
+		
+		resp.addQuery('score', scoreRec.sys_id);
+		resp.query();
+		
+		while (resp.next()) {
+			++possible;
+			if (JSUtil.nil(resp.answer))
+				return -1;
+			
+			if (resp.answer.correct) {
+				this._debug('scoreExam(): you got #' + resp.question.number + ' correct');
+				++correct;
+				
+			} else {
+				this._debug('scoreExam(): you got #' + resp.question.number + ' wrong');
+			}
+		}
+		
+		this._debug('scoreExam(): correct  =' + correct);
+		this._debug('scoreExam(): possible =' + possible);
+		this._debug('scoreExam(): min_score=' + scoreRec.exam.min_score);
+		
+		scoreRec.score    = correct;
+		scoreRec.possible = possible;
+		scoreRec.percent  = (correct / possible) * 100;
+		
+		if (correct >= scoreRec.exam.min_score) {
+			this._debug('scoreExam(): You PASS!');
+			scoreRec.pass_fail = 'Pass';
+			
+		} else {
+			this._debug('scoreExam(): Sorry, you fail');
+			scoreRec.pass_fail = 'Fail';
+		}
+		
+		scoreRec.state = 'Complete';
+		
+		scoreRec.update();
+		
+		return correct;
+	},
+	
+	/*
+ 	* validateQuestions - go through all questions on an to:
+ 	*                     ensure there is one and only one correct answer per question
+ 	*                     ensure uniqueness on question numbers and order
+ 	*
+ 	* @param: exam_id - which exam should we check the questions for?
+ 	* @return: boolean (true=success)
+ 	*
+ 	*/
+	validateQuestions : function(exam_id) {
+		
+		var quest        = new GlideRecord(this.questionTable);
+		var errCount     = 0;
+		var validated    = true; // Assume everything is fine, until at least one question
+		// comes back w/o correct answer indicated
+		
+		quest.addQuery('exam', exam_id);
+		quest.addQuery('active', true);
+		quest.orderBy('order');
+		
+		quest.query();
+		
+		while (quest.next()) {
+			
+			// Make sure each question has a 'correct' answer marked
+			var answer = new GlideRecord(this.answerTable);
+			var foundCorrect = false;
+			
+			answer.addQuery('question', quest.getValue('sys_id'));
+			answer.orderBy('order');
+			answer.query();
+			
+			this._debug('checkAnswers(): The correct answer to #' + quest.getValue('number') + ': ' + quest.getValue('text'));
+			while (answer.next() && !foundCorrect) {
+				
+				if (answer.correct) {
+					this._debug('checkAnswers(): -->' + answer.getValue('text'));
+					foundCorrect = true;
+				}
+			}
+			
+			if (!foundCorrect) {
+				var msgArray = [];
+				
+				msgArray.push(quest.getValue('sys_id'));
+				msgArray.push(quest.getValue('number'));
+				
+				gs.addErrorMessage(gs.getMessage('exam_validation_no_correct_answer', msgArray));
+				this._debug('checkAnswers(): --> has no correct answers');
+				++errCount;
+			}
+			
+		}
+		
+		if (this._hasDupes(exam_id, 'number')) {
+			gs.addErrorMessage(gs.getMessage('exam_validation_duplicate_numbers'));
+			this._debug('validateQuestions(): Duplicate numbers found');
+			++errCount;
+		}
+		
+		if (this._hasDupes(exam_id, 'order')) {
+			gs.addErrorMessage(gs.getMessage('exam_validation_duplicate_order'));
+			this._debug('validateQuestions(): Duplicate orders found');
+			++errCount;
+		}
+		
+		if (errCount > 0)
+			validated = false;
+		
+		return validated;
+	},
+	
+	/*
+ 	* hasPassedThisExam - determine if this user has passed this exam
+ 	*                     Used to display correct/incorrect answers
+ 	*
+ 	* @param: scoreRec - GlideRecord of the current score record
+ 	* @return: boolean - true=user has passed this exam once
+ 	*
+ 	*/
+	hasPassedThisExam : function(scoreRec) {
+		
+		this._debug('hasPassedThisExam(): scoreRec.exam.show_answers=' + scoreRec.exam.show_answers);
+		if (scoreRec.exam.show_answers == 'always')
+			return true;
+		
+		if (scoreRec.exam.show_answers == 'never' || JSUtil.nil(scoreRec.exam.show_answers))
+			return false;
+		
+		// Now see if they have passed to determine if 'only_on_pass' is true/false
+		
+		var retVal = false; // Assume they have NOT passed yet
+		var count  = 0;
+		
+		// Count how many times this person has passed this exam
+		// by looking at sibling score records
+		var sa = new GlideAggregate('exam_score');
+		
+		sa.addAggregate('COUNT');
+		sa.addQuery('exam', scoreRec.exam);
+		sa.addQuery('user', scoreRec.user);
+		sa.addQuery('pass_fail', 'Pass');
+		sa.query();
+		
+		if (sa.next()) {
+			count = sa.getAggregate('COUNT');
+		}
+		
+		if (count > 0) {
+			retVal = true;
+		}
+		
+		return retVal;
+	},
+	
+	/*
+ 	* responseQUestionRefQual - limit the questions on a response the current exam
+ 	*
+ 	* @param GlideRecord('exam_response')
+ 	* @return encoded query string
+ 	*
+ 	*/
+	responseQuestionRefQual : function(resp) {
+		
+		var answer = 'exam=' + resp.score.exam;
+		
+		this._debug('responseQuestionRefQual(): answer=' + answer);
+		
+		return answer;
+	},
+	
+	/*
+ 	* responseAnswerRefQual - limit the answers displayed on a response to the current question
+ 	*
+ 	* @param GlideRecord('exam_response')
+ 	* @return encoded query string
+ 	*
+ 	*/
+	
+	responseAnswerRefQual : function(resp) {
+		
+		var answer = 'question=' + resp.question;
+		
+		this._debug('responseAnswerRefQual(): answer=' + answer);
+		
+		return answer;
+	},
+	
+	/*
+ 	* *** OBSOLETE - Used for email URls prior to Eureka ***
+ 	*
+ 	* makeExamURL - create a URL to the UI page
+ 	*
+ 	* @param GlideRecord('exam_score')
+ 	* @return string
+ 	*
+ 	*/
+	makeExamURL : function(score) {
+		
+		var url = gs.getProperty('glide.servlet.uri');
+		
+		if (JSUtil.nil(url))
+			url = 'https://' + gs.getProperty('instance_name') + '.service-now.com';
+		
+		var answer = url + '/nav_to.do?uri=take_exam.do?sysparm_id=' + score.getValue('sys_id');
+		
+		return answer;
+	},
+	
+	/*
+ 	* countScoreRecs - count how many exams this user has
+ 	*
+ 	* @param filterStr - Encoded query string
+ 	* @uses - this.scoreTable
+ 	* @returns - integer (result of
+ 	*
+ 	*/
+	countScoreRecs : function(filterStr) {
+		
+		var ga = new GlideAggregate(this.scoreTable);
+		
+		this._debug('countScoreRecs(): filterStr=' + filterStr);
+		ga.addAggregate('COUNT');
+		ga.addEncodedQuery(filterStr);
+		ga.query();
+		
+		var count = 0;
+		
+		if (ga.next()) {
+			count = ga.getAggregate('COUNT');
+		}
+		this._debug('countScoreRecs(): count=' + count);
+		
+		return count;
+		
+	},
+	
+	/*
+ 	* putScoreList - create list of score records for indicated exam for all users the specified group
+ 	*
+ 	* @param examID - sys_id of a GlideRecord(this.examTable)
+ 	* @param groupID - sys_id of a GlideRecord(this.examGroupTable);
+ 	* @uses this.userGrmemberTable, this.scoreTable
+ 	* return count - integer of records created
+ 	*
+ 	*/
+	putScoreList : function (examID, groupID) {
+		
+		// Get all users in the group
+		var user_group = new GlideRecord(this.userGrmemberTable);
+		var count      = 0;
+		
+		user_group.addQuery('group', groupID);
+		user_group.query();
+		
+		while (user_group.next()) {
+			
+			// Create a score record for this user and this exam
+			var attempt = this.getNextAttempt(examID, user_group.getValue('user'));
+			this.addScoreRec(examID, user_group.getValue('user'), groupID, attempt);
+			++count;
+		}
+		
+		return count;
+		
+	},
+	
+	/*
+ 	* getScoreList - get a list of score records to display on the main page
+ 	*
+ 	* @param - none
+ 	* @uses - this.scoretable
+ 	* @return - array of objects (score records)
+ 	*
+ 	*/
+	getScoreList : function() {
+		
+		var sGr = new GlideRecord(this.scoreTable);
+		var scoreList = [];
+		
+		sGr.addQuery('user', gs.getUserID());
+		sGr.addQuery('state', '!=', 'Pending');
+		sGr.orderBy('sys_created_on');
+		sGr.query();
+		
+		this._debug('getScoreList(): count=' + sGr.getRowCount());
+		
+		while (sGr.next()) {
+			var so = {};
+			
+			so.active                  = sGr.getValue('active');
+			so.sys_id                  = sGr.getValue('sys_id');
+			so.state                   = sGr.getValue('state');
+			so.attempt                 = sGr.getValue('attempt');
+			so.pass_fail               = sGr.getValue('pass_fail');
+			so.percent                 = sGr.getValue('percent');
+			so.exam_show_score         = sGr.exam.show_score;
+			so.exam_name               = sGr.exam.getDisplayValue();
+			so.exam_review_on_complete = sGr.exam.review_on_complete;
+			this._debug('getScoreList(): ' + so.exam_name + ' show_score=' + so.exam_show_score);
+			this._debug('getScoreList(): ' + so.exam_name + ' review_on_complete=' + so.exam_review_on_complete);
+			this._debug('getScoreList(): ' + so.exam_name + ' percent=' + so.percent);
+			scoreList.push(so);
+		}
+		
+		return scoreList;
+	},
+	
+	/*
+ 	* deleteScoreList - delete list of score records for indicated exam for all users the specified group
+ 	*
+ 	* @param examID - sys_id of a GlideRecord(this.examTable)
+ 	* @param groupID - sys_id of a GlideRecord(this.examGroupTable);
+ 	* @uses this.userGrmemberTable, this.scoreTable
+ 	* return none
+ 	*
+ 	*/
+	deleteScoreList : function(examID, groupID) {
+		
+		// Get all users in the group
+		var user_group = new GlideRecord(this.userGrmemberTable);
+		
+		user_group.addQuery('group', groupID);
+		user_group.query();
+		
+		while (user_group.next()) {
+			
+			// Delete the score record for this user and this exam
+			var score = new GlideRecord(this.scoreTable);
+			
+			score.addQuery('user', user_group.getValue('user'));
+			score.addQuery('exam', examID);
+			score.query();
+			
+			if (!score.hasNext()) {
+				this._debug('deleteScoreList(): No score found: exam=' + examID + ' user=' + user_group.getValue('user'));
+			} else {
+				score.deleteMultiple();
+			}
+		}
+	},
+	
+	/*
+ 	* inheritScoreRec - as a user is added to a group, check to see if there are any active
+ 	*                   exams for that group and add  a score rec if necessary
+ 	* 2015-01-31 -cwt - Added:
+ 	*                   If an active score (user/exam) exists linked to this group, recalc & return.
+ 	*                   If an active score (user/exam) exists unlinked to this group, link it.
+ 	*                   Otherwise create a new one
+ 	*
+ 	* @param userID - sys_id of the user added to the group
+ 	* @param groupID - sys_id of the group being added to
+ 	* @uses this.examGrmemberTable
+ 	* @return - none
+ 	*
+ 	*/
+	inheritScoreRec : function(userID, groupID) {
+		
+		var examgr = new GlideRecord(this.examGrmemberTable);
+		
+		examgr.addQuery('group', groupID);
+		examgr.addQuery('state', 'NOT IN', 'Complete,Canceled');
+		examgr.query();
+		
+		while (examgr.next()) {
+			
+			// Check if there is already an active score rec for this exam/user/group
+			// If so, just recalc and return
+			if (this._activeGroupScoreRecExists(examgr.getValue('exam'), userID, groupID)) {
+				this._debug('inheritScoreRec(): Active linked GROUP score record already found: ' +
+				examgr.exam.getDisplayValue() + ' userID=' + userID + ' groupID=' + groupID);
+				
+				// Recalculate
+				this.updateExamGroupStateDetails(examgr.getValue('exam'), groupID);
+				return;
+			}
+			
+			// If an active unlinked score rec exists for this exam/user, then link it,
+			// otherwise create a new one with addScoreRec
+			if (!this._linkActiveUnlinkedScoreRec(examgr.getValue('exam'), userID, groupID)) {
+				
+				var attempt = this.getNextAttempt(examgr.getValue('exam'), userID);
+				this._debug('inheritScoreRec(): Creating new score record...');
+				this.addScoreRec(examgr.getValue('exam'), userID, groupID, attempt);
+			}
+		}
+	},
+	
+	/*
+ 	* _activeGroupScorRecExists - check if there is an active score rec for this exam/user/group
+ 	*
+ 	* @param examID - sys_id of the exam to check for
+ 	* @param userID = sys_id of the user taking said exam
+ 	* @param groupID - sys_id of the group we wish to link to
+ 	* @uses this.scoreTable
+ 	* @return - boolean (true=a record was found)
+ 	*
+ 	*/
+	_activeGroupScoreRecExists : function(examID, userID, groupID) {
+		
+		var score = new GlideRecord(this.scoreTable);
+		
+		this._debug('_activeGroupScoreRecExists(START): examID=' + examID + ' userID=' + userID + ' groupID=' + groupID);
+		
+		score.addQuery('exam', examID);
+		score.addQuery('user', userID);
+		score.addQuery('group', groupID);
+		score.addQuery('state', 'NOT IN', 'Complete,Canceled');
+		score.query();
+		
+		this._debug('_activeGroupScoreRecExists(): score.getRowCount()=' + score.getRowCount());
+		
+		return score.hasNext();
+		
+	},
+	
+	/*
+ 	* _linkActiveUnlinkedScoreRec - if there is an active score rec for this exam/user
+ 	*                               combination w/o a group then link it & recalculate
+ 	*                               exam/group state details
+ 	*
+ 	* @param examID - sys_id of the exam to check for
+ 	* @param userID = sys_id of the user taking said exam
+ 	* @param groupID - sys_id of the group we wish to link to
+ 	* @uses this.scoreTable
+ 	* @return - boolean (true=a record was found & linked)
+ 	*
+ 	*/
+	
+	_linkActiveUnlinkedScoreRec : function(examID, userID, groupID) {
+		
+		var score = new GlideRecord(this.scoreTable);
+		
+		score.addQuery('exam', examID);
+		score.addQuery('user', userID);
+		score.addNullQuery('group');
+		score.addQuery('state', 'NOT IN', 'Complete,Canceled');
+		
+		score.query();
+		
+		this._debug('_linkActiveUnlinkedScorRec(): score.getRowCount()=' + score.getRowCount());
+		
+		if (score.next()) {
+			this._debug('_linkActiveUnlinkedScoreRec(): Unlinked record found. Linking: ' + score.user.getDisplayValue() + '/' + score.exam.getDisplayValue() + ' to score rec ' + score.getValue('sys_id'));
+			score.setValue('group', groupID);
+			score.update();
+			this.updateExamGroupStateDetails(examID, groupID);
+			
+			return true;
+		}
+		
+		this._debug('_linkActiveUnlinkedScoreRec(): No unlinked score records found.');
+		
+		return false;
+	},
+	
+	/*
+ 	* addScoreRec - insert a new score record for the exam, user, and (optional) group
+ 	*
+ 	* @param examID - sys_id of an exam rec
+ 	* @param userID - sys_id of a user rec
+ 	* @param groupID - sys_id of a group (part of a mass creation)
+ 	* @param attempt - what attempt is this?
+ 	* @uses - this.ScoreTable
+ 	* @return - sys_id of the new record
+ 	*
+ 	*/
+	addScoreRec : function(examID, userID, groupID, attempt) {
+		
+		var score = new GlideRecord(this.scoreTable);
+		
+		if (JSUtil.nil(attempt))
+			attempt = 1;
+		
+		score.newRecord();
+		score.exam    = examID;
+		score.user    = userID;
+		score.group   = groupID;
+		score.attempt = attempt;
+		var id = score.insert();
+		
+		return id;
+	},
+	
+	/*
+ 	* startGroupExam - Change all related score records from Pending to Ready
+ 	*
+ 	* @param eGr - GlideRecord(this.examGrmemberTable)
+ 	* @uses this.userGrmemberTable, this.scoreTable
+ 	* @returns none
+ 	*
+ 	*/
+	startGroupExam : function(eGr) {
+		
+		var eug = new GlideRecord(this.userGrmemberTable);
+		
+		eug.addQuery('group', eGr.getValue('group'));
+		eug.query();
+		
+		while (eug.next()) {
+			
+			var score = new GlideRecord(this.scoreTable);
+			
+			score.addQuery('user', eug.getValue('user'));
+			score.addQuery('exam', eGr.getValue('exam'));
+			score.addQuery('state', 'Pending');
+			score.query();
+			
+			while (score.next()) {
+				score.state = 'Ready';
+				score.update();
+			}
+			// State gets updated by the BR running on score
+			// current.state = 'Ready';
+			// current.update();
+		}
+	},
+	
+	/*
+ 	* cancelGroupExam - take all active scoreRecs and set the state to Canceled
+ 	*
+ 	* @param eGr - GlideRecord(this.examGrmemberTable);
+ 	* @uses this.userGrmemberTable, this.scoreTable
+ 	* @return none
+ 	*
+ 	*/
+	cancelGroupExam : function(eGr) {
+		var eug = new GlideRecord(this.userGrmemberTable);
+		
+		eug.addQuery('group', current.getValue('group'));
+		eug.query();
+		
+		while (eug.next()) {
+			
+			var score = new GlideRecord(this.scoreTable);
+			
+			score.addQuery('user', eug.getValue('user'));
+			score.addQuery('exam', eGr.getValue('exam'));
+			score.addQuery('active', true);
+			score.query();
+			
+			while (score.next()) {
+				score.state = 'Canceled';
+				score.active = false;
+				score.update();
+			}
+			// state is updated as part of the BR on the score table
+			// current.state = 'Canceled';
+			// current.update();
+		}
+	},
+	
+	/*
+ 	* getAnswerList - retrieve an array of answers to produce answers on the exam UI page
+ 	*
+ 	* @param response - GlideRecord(this.responseTable);
+ 	* @uses - this._getStdAnswers()
+ 	* @returns - array of answer text & sys_ids (order is determined by query)
+ 	*
+ 	*/
+	getAnswerList : function(response) {
+		
+		this._debug('getAnswerList(): Response         =' + response.getDisplayValue());
+		this._debug('getAnswerList(): Score ID         =' + response.score.getDisplayValue());
+		this._debug('getAnswerList(): Exam             =' + response.score.exam.getDisplayValue());
+		this._debug('getAnswerList(): Question         =' + response.question.getDisplayValue());
+		this._debug('getAnswerList(): Randomize answers=' + response.score.exam.randomize_answers);
+		
+		// Check if this response does not have a map (v1 exam)
+		// Then just use the answers in the default order
+		if (JSUtil.nil(response.answer_map)) {
+			return this._getStdAnswers(response);
+		}
+		
+		return new JSON().decode(response.answer_map);
+		
+	},
+	
+	/*
+ 	* _getStdAnswers - just read the answer table in the normal order
+ 	*
+ 	* @param response - GlideRecord(this.responseTable)
+ 	* @uses this.answerTable
+ 	* @return - array of objects - sys_id & text (order is determined by the query)
+ 	*
+ 	*/
+	_getStdAnswers : function(response) {
+		
+		var answerGr = new GlideRecord(this.answerTable);
+		var retVal   = [];
+		
+		answerGr.addActiveQuery();
+		answerGr.addQuery('question', response.question);
+		answerGr.orderBy('order');
+		answerGr.query();
+		
+		while (answerGr.next()) {
+			var aObj = {};
+			
+			aObj.sys_id = answerGr.getValue('sys_id');
+			aObj.text   = answerGr.getDisplayValue();
+			
+			retVal.push(aObj);
+			this._debug('getStdAnswers(): ' + answerGr.order + ': ' + aObj.text + '=' + aObj.sys_id);
+		}
+		
+		return retVal;
+	},
+	
+	/*
+ 	* putAnswerList - create an random ordered list of answers & save it to 'map' for later viewing
+ 	*
+ 	* @param response - GlideRecord(this.responseTable)
+ 	* @uses this.questionTable, this.answerTable
+ 	* @return JSON encoded array of answer objects
+ 	*/
+	putAnswerList : function(response) {
+		
+		var qGr   = new GlideRecord(this.questionTable);
+		var aList = []; // Array of answers to save
+		
+		this._debug('putAnswerList(): response=' + response.getDisplayValue());
+		
+		// Get the question this response points to
+		if (qGr.get(response.question)) {
+			
+			this._debug('putAnswerList(): question=' + qGr.getDisplayValue());
+			this._debug('putAnswerList(): question.force_answer_order=' + qGr.force_answer_order);
+			
+			// Get all answers for this question
+			var aGr = new GlideRecord(this.answerTable);
+			
+			aGr.addQuery('question', qGr.getValue('sys_id'));
+			aGr.addActiveQuery();
+			aGr.orderBy('order');
+			aGr.query();
+			this._debug('putAnswerList(): answer.count=' + aGr.getRowCount());
+			
+			while (aGr.next()) {
+				var aObj = {};
+				
+				aObj.sys_id = aGr.getValue('sys_id');
+				aObj.text   = aGr.getValue('text');
+				aList.push(aObj);
+			}
+			
+			// Scramble the array - unless question has override set
+			if (!qGr.force_answer_order) {
+				this._debug('putAnswerList(): shuffing answer list...');
+				aList = this._shuffle(aList);
+			} else {
+				this._debug('putAnswerList(): retaining standard list order (forced)...');
+			}
+		}
+		
+		return new JSON().encode(aList);
+	},
+	
+	/*
+ 	* updateExamGroupStateDetails - keep the details string up to date as score records are updated
+ 	*
+ 	* @param examID - sysID of the score record's exam
+ 	* @param groupID - sysID of the group this user/score is associated with
+ 	* @uses this.examGrMemberTable, this.scoreTable
+ 	* @return - none
+ 	*
+ 	*/
+	updateExamGroupStateDetails : function(examID, groupID) {
+		
+		var setState  = 'In Progress';
+		
+		this._debug('updateExamGroupStateDetails: examID=' + examID + ' groupID=' + groupID);
+		
+		// This shouldn't happen, but check anyway
+		if (JSUtil.nil(examID))
+			return;
+		
+		// Not part of a group, this doesn't matter.
+		if (JSUtil.nil(groupID))
+			return;
+		
+		var examgr = new GlideRecord(this.examGrmemberTable);
+		
+		examgr.addQuery('exam', examID);
+		examgr.addQuery('group', groupID);
+		examgr.query();
+		
+		// this._debug('updateExamGroupStateDetails(): rows=' + examgr.getRowCount());
+		
+		if (examgr.next()) {
+			
+			// Get all records for this exam/group and check state
+			var score      = new GlideAggregate(this.scoreTable);
+			var scoreCount = 0;
+			var stateList  = this._initScoreStateList();
+			
+			score.addQuery('group', groupID);
+			score.addQuery('exam', examID);
+			score.addAggregate('COUNT', 'state');
+			score.query();
+			
+			// Tally state counts
+			while (score.next()) {
+				
+				var state = score.state;
+				var count = score.getAggregate('COUNT', 'state');
+				
+				if (state == 'Canceled')
+					state = 'Complete';
+				
+				this._debug('updateExamGroupStateDetails(): exam=' + examgr.exam.getDisplayValue() + ' group=' + examgr.group.getDisplayValue()
+				+ ' state=' + state + ' count=' + parseInt(count));
+				
+				stateList[state].count = parseInt(count);
+				this._debug('updateExamGroupStateDetails(): stateList[' + state + '].count=' + stateList[state].count);
+				++scoreCount; // Count how many different states were found
+			}
+			
+			// If no count records were counted, there are either 0 exams or
+			// all are completed, either way - the exam group record is complete
+			var pCount = stateList['Pending'].count;
+			var rCount = stateList['Ready'].count;
+			var iCount = stateList['In progress'].count;
+			
+			if (pCount == 0 && rCount == 0 && iCount == 0)
+				setState = 'Complete';
+			
+			// If only one answer was found, use it
+			if (scoreCount == 1) {
+				this._debug('updateExamGroupStateDetails(): Only one state found. Updating state to: ' + state);
+				setState = state;
+			}
+			
+			// Crazy state - no score records...
+			if (scoreCount == 0) {
+				this._debug('updateExamGroupStateDetails(): No active states counted. Marking complete.');
+				setState = 'Complete';
+			}
+			
+			// Update the record
+			examgr.state         = setState;
+			examgr.state_details = this._sortStateListByOrder(stateList);
+			this._debug('updateExamGroupStateDetails(): state_details=' + examgr.state_details);
+			examgr.update();
+		}
+	},
+	
+	/*
+ 	* deleteUserFromGroup - determine what to do with the score records after
+ 	*                       a user/group record has been deleted
+ 	*
+ 	* Description:
+ 	* Get a list of all exams that apply to this group
+ 	*
+ 	* for each exam...
+ 	*   Go through all score records for the specified user, group, exam combination
+ 	*   Based on the group.user_delete_action:
+ 	*
+ 	*     remove: all records matching user/group/exam combination
+ 	*     remove_inactive: all records matching user/group/exam/state combination
+ 	*     unlink: set "group" to null on all score records matching user/group/exam combination
+ 	*     nothing: just exit
+ 	*
+ 	* @param userID = sys_id of the user being removed from said group
+ 	* @param groupID - sys_id of affected group
+ 	* @uses this.getExamGroupListByGroup(), this.groupTable, this.scoreTable
+ 	* @return none
+ 	*
+ 	*/
+	deleteUserFromGroup : function(userID, groupID) {
+		
+		this._debug('deleteUserFromGroup(START): userID=' + userID + ' groupID=' + groupID);
+		
+		// Standard prelude
+		if (JSUtil.nil(userID))
+			return;
+		
+		if (JSUtil.nil(groupID))
+			return;
+		
+		gs.getSession().setStrictQuery(true);
+		
+		// Get group details (we'll need the user_delete_action)
+		var group = new GlideRecord(this.groupTable);
+		
+		if (!group.get(groupID))
+			return;
+		this._debug('deleteUserFromGroup(): group=' + group.getDisplayValue() + ' user_delete_action=' + group.getValue('user_delete_action'));
+		
+		// If the group is configured to do nothing, then leave
+		if (group.getValue('user_delete_action') == 'nothing') {
+			this._debug('deleteUserFromGroup(): user_delete_action==nothing: returning...');
+			return;
+		}
+		
+		// First find out which exams are tied to this group...
+		var examList = this._getExamGroupListByGroup(groupID);
+		
+		this._debug('deleteUserFromGroup(): ' + examList.length + ' exams impacted');
+		
+		for (var i = 0; i < examList.length; i++) {
+			// Next find all score records that match what we need
+			var score = new GlideRecord(this.scoreTable);
+			
+			this._debug('deleteUserFromGroup(): examID=' + examList[i] + ' userID=' + userID + ' groupID=' + groupID);
+			
+			score.addQuery('user', userID);
+			score.addQuery('group', groupID);
+			score.addQuery('exam', examList[i]);
+			
+			if (group.user_delete_action == 'remove_inactive')
+				score.addQuery('state', 'IN', 'Pending,Complete,Canceled');
+			
+			score.query();
+			
+			this._debug('deleteUserFromGroup(): score.getRowCount()=' + score.getRowCount());
+			
+			while (score.next()) {
+				
+				switch (group.getValue('user_delete_action')) {
+					case 'remove':
+					score.deleteRecord();
+					this._debug('deleteUserFromGroup(): REMOVE ' + score.exam.getDisplayValue() + '/' + score.user.getDisplayValue() + '/' + score.group.getDisplayValue());
+					// this.updateExamgroupStateDetails() triggered from DELETE BR
+					break;
+					
+					case 'remove_inactive':
+					score.deleteRecord();
+					this._debug('deleteUserFromGroup(): REMOVE INACTIVE ' + score.exam.getDisplayValue() + '/' + score.user.getDisplayValue() + '/' + score.group.getDisplayValue() + '(state=' + score.state + ')');
+					// this.updateExamgroupStateDetails() triggered from DELETE BR
+					break;
+					
+					case 'unlink':
+					score.setValue('group', '');
+					score.update();
+					this.updateExamGroupStateDetails(examList[i], groupID);
+					this._debug('deleteUserFromGroup(): UNLINK ' + score.exam.getDisplayValue() + '/' + score.user.getDisplayValue() + '/' + score.group.getDisplayValue());
+					break;
+					
+					default:
+					this._debug('deleteUserFromGroup(): DEFAULT ' + score.exam.getDisplayValue() + '/' + score.user.getDisplayValue() + '/' + score.group.getDisplayValue());
+				}
+			}
+		}
+	},
+	
+	/*
+ 	* copyExam - Create a duplicate of the exam (GlideRecord) presented.
+ 	*            This also copies all question and answer records.
+ 	*
+ 	* @param sourceExam - GlideRecord(this.examTable)
+ 	* @uses - this.examTable, this._makeTargetName(), this.copyQuestionsAndAnswers()
+ 	* @return - name of the new exam
+ 	*
+ 	*/
+	copyExam : function(sourceExam) {
+		
+		var examFields = ['active', 'administrator', 'fail_notification', 'max_questions',
+		'max_retries', 'min_score', 'notify_admin_on_fail', 'notify_admin_on_pass',
+		'notify_user_on_fail', 'notify_user_on_pass', 'notify_when_ready', 'pass_notification',
+		'randomize', 'randomize_answers', 'ready_notification', 'review_on_complete',
+		'short_description', 'show_answers', 'show_score'];
+		
+		targetExam = new GlideRecord('exam');
+		
+		targetExam.newRecord();
+		targetName = this._makeNewExamName(sourceExam);
+		
+		targetExam.name = targetName;
+		this._debug('copyExam(): Creating exam copy: ' + targetName);
+		
+		// Copy all the fields above from the source record to the target record
+		for (var i = 0; i < examFields.length; i++) {
+			targetExam.setValue(examFields[i], sourceExam.getValue(examFields[i]));
+		}
+		
+		var targetExamID = targetExam.insert();
+		
+		// Now copy all the questions and answers from the source to the target
+		if (targetExamID != -1)
+			this._copyQuestionsAndAnswers(sourceExam.getValue('sys_id'), targetExamID);
+		
+		return targetExamID;
+	},
+	
+	/*
+ 	* _makeTargetName - create a copy of the name with a unique suffix (_1, _2, etc)
+ 	*
+ 	* @param sourceExam - GlideRecord('exam') to look for uniqueness
+ 	* @uses this.examTable
+ 	* @return - new unique name
+ 	*
+ 	*/
+	_makeNewExamName : function(sourceExam) {
+		
+		var examName = sourceExam.getValue('name');
+		var regPat = /^(.*?)_(\d+)$/;
+		var match = regPat.exec(examName);
+		var count = 0;
+		var base = examName.substr(0,37);
+		
+		var gr = new GlideRecord(this.examTable);
+		
+		if (match != null) {
+			base = match[1];
+			count = parseInt(match[2]);
+			// this._debug('_makeNewExamName(): number suffix found. base=' + base + ' count=' + count);
+		}
+		
+		do {
+			++count;
+			var result = base + '_' + count;
+			// this._debug('_makeNewExamName(): Testing: ' + result);
+			
+		} while (gr.get('name', result));
+		
+		// this._debug('_makeNewExamName(): Looks like: ' + result + ' is available.');
+		
+		return result;
+	},
+	
+	/*
+ 	* _copyQuestionsAndAnswers - copy all questions and answers related to the
+ 	*                            source exam over to the target Exam
+ 	*
+ 	* @param sourceExamID - get questions related to this exam
+ 	* @param targetExamID - create new questions and related them to this exam
+ 	* @uses this.questionTable, this._copyQuestion()
+ 	* @returns none
+ 	*
+ 	*/
+	_copyQuestionsAndAnswers : function(sourceExamID, targetExamID) {
+		
+		var sourceQuestion = new GlideRecord(this.questionTable);
+		
+		sourceQuestion.addQuery('exam', sourceExamID);
+		sourceQuestion.orderBy('order');
+		sourceQuestion.query();
+		
+		while (sourceQuestion.next()) {
+			// this._debug('Creating question copy:' + sourceQuestion.getValue('order') + ' sys_id=' + sourceQuestion.getValue('sys_id'));
+			var targetQuestionID = this._copyQuestion(sourceQuestion, targetExamID);
+			// this._debug('----Target Question ID=' + targetQuestionID);
+		}
+	},
+	
+	/*
+ 	* _copyQuestion - copy one question and related answers
+ 	*
+ 	* @param sourceQuestion - which question are we copying from? GlideRecord(this.questionTable)
+ 	* @param targetExamID - which exam will the new question be related to?
+ 	* @uses this.questionTable, this._copyAnswers()
+ 	* @returns none
+ 	*
+ 	*/
+	_copyQuestion : function(sourceQuestion, targetExamID) {
+		
+		var qFields = ['active', 'category', 'force_answer_order',
+		'image', 'number', 'order', 'text'];
+		
+		var targetQuestion = new GlideRecord(this.questionTable);
+		
+		targetQuestion.newRecord();
+		
+		targetQuestion.setValue('exam', targetExamID);
+		for (var i = 0; i < qFields.length; i++) {
+			targetQuestion.setValue(qFields[i], sourceQuestion.getValue(qFields[i]));
+		}
+		
+		targetQuestionID = targetQuestion.insert();
+		// this._debug('----_copyQuestion(): targetQuestionID=' + targetQuestionID);
+		
+		this._copyAnswers(sourceQuestion.getValue('sys_id'), targetQuestionID);
+		
+		GlideSysAttachment.copy(this.questionTable, sourceQuestion.getValue('sys_id'), this.questionTable, targetQuestionID);
+	},
+	
+	/*
+ 	* _copyAnswers - copy the answers from the source question to the target
+ 	*
+ 	* @param sourceQuestionID - the original question ID
+ 	* @param targetQuestionID - the target question ID
+ 	* @uses this.answerTable, this._copyAnswer()
+ 	* @returns none
+ 	*
+ 	*/
+	_copyAnswers : function(sourceQuestionID, targetQuestionID) {
+		
+		sourceAnswer = new GlideRecord(this.answerTable);
+		
+		sourceAnswer.addQuery('question', sourceQuestionID);
+		sourceAnswer.orderBy('order');
+		sourceAnswer.query();
+		
+		while (sourceAnswer.next()) {
+			// this._debug('----Creating answer copy:' + sourceAnswer.getValue('order') + ' sys_id=' + sourceAnswer.getValue('sys_id'));
+			this. _copyAnswer(sourceAnswer, targetQuestionID);
+			// this._debug('----Target Question ID=' + targetQuestionID);
+		}
+	},
+	
+	/*
+ 	* _copyAnswer - create a copy of the source answer and associate it with the target question ID
+ 	*
+ 	* @param sourceAnswer - GlideRecord(this.answerTable), original answer fields
+ 	* @param targetQuestionID - associate values with the new target question
+ 	* @uses this.answerTable
+ 	* @return none
+ 	*
+ 	*/
+	_copyAnswer : function(sourceAnswer, targetQuestionID) {
+		
+		var aFields = ['active', 'correct', 'order', 'text'];
+		
+		var targetAnswer = new GlideRecord('exam_answer');
+		
+		targetAnswer.newRecord();
+		// this._debug('------_copyAnswer(): targetQuestionID=' + targetQuestionID);
+		
+		targetAnswer.setValue('question', targetQuestionID);
+		
+		for (var i = 0; i < aFields.length; i++) {
+			// this._debug('------answer.' + aFields[i] + '=' + sourceAnswer.getValue(aFields[i]));
+			targetAnswer.setValue(aFields[i], sourceAnswer.getValue(aFields[i]));
+		}
+		
+		targetAnswer.insert();
+	},
+	
+	/*
+ 	* _getExamGroupListByGroup - retrieve a list of exams if given a group ID
+ 	*
+ 	* @param groupID - sys_id of the group we want to know about
+ 	* @uses - this.examGrmemberTable
+ 	* @return array of exam sys_ids
+ 	*
+ 	*/
+	_getExamGroupListByGroup : function(groupID) {
+		
+		var examgr = new GlideRecord(this.examGrmemberTable);
+		var answer = [];
+		
+		gs.getSession().setStrictQuery(true);
+		examgr.addQuery('group', groupID);
+		examgr.query();
+		
+		while (examgr.next()) {
+			answer.push(examgr.getValue('exam'));
+		}
+		
+		// this._debug('getExamGroupListByGroup(): answer=' + answer.join(','));
+		
+		return answer;
+	},
+	
+	
+	/*
+ 	* _initScoreStateList - create a hash array of state choices & init to 0
+ 	*
+ 	* @param - none
+ 	* @uses - this.scoreTable
+ 	* @return - hash array
+ 	*
+ 	*/
+	_initScoreStateList : function() {
+		
+		var choice = new GlideRecord('sys_choice');
+		var list   = {};
+		
+		choice.addQuery('name', this.scoreTable);
+		choice.addQuery('element', 'state');
+		choice.addQuery('language', 'en');
+		choice.addQuery('inactive', false);
+		choice.orderBy('sequence');
+		
+		choice.query();
+		
+		while (choice.next()) {
+			var state    = choice.getValue('value');
+			var sequence = choice.getValue('sequence');
+			
+			if (state == 'Canceled')
+				continue;
+			list[state] = {'count':0, 'order':sequence};
+		}
+		
+		return list;
+	},
+	
+	/*
+ 	* _sortStateListByOrder - take the state list assoc. array and sort by order
+ 	*
+ 	* @param h - associative array w/{count, order} properties
+ 	* @uses - none
+ 	* @returns - string of properly formattted state details
+ 	*
+ 	*/
+	_sortStateListByOrder : function(h) {
+		
+		// Put the key in the object  & make a natural array to sort
+		var arr1 = [];
+		for (var k in h) {
+			arr1.push({'state':k, 'count': h[k].count, 'order':h[k].order});
+		}
+		
+		var s = arr1.sort(function(a,b) {
+			return a.order - b.order;
+		});
+		
+		// Get the sorted results
+		var setDetails = [];
+		for (var i = 0; i < s.length; i++) {
+			setDetails.push(s[i].state + ':' + s[i].count);
+		}
+		
+		return setDetails.join(', ');
+	},
+	
+	/*
+ 	* _getExamRec - get the properties for the current exam
+ 	*
+ 	* @param none
+ 	* @returns GlideRecord
+ 	* Called from: internal
+ 	*
+ 	*/
+	_getExamRec : function(exam_id) {
+		
+		var gr = new GlideRecord(this.examTable);
+		
+		if (gr.get(exam_id)) {
+			return gr;
+			
+		} else {
+			this._debug('_getExamRec(): ERROR - cannot read exam record');
+			return NULL;
+		}
+	},
+	
+	/*
+ 	* _dumpExamRec - throw the info to the debug log just to ensure goodness
+ 	*
+ 	* @param: examRec - the exam record to view
+ 	* @returns none
+ 	*
+ 	*/
+	_dumpExamRec : function(examRec) {
+		
+		this._debug('_dumpExamRec(): *************************************');
+		this._debug('_dumpExamRec(): examRec.name=         ' + examRec.getValue('name'));
+		this._debug('_dumpExamRec(): examRec.sys_id=       ' + examRec.getValue('sys_id'));
+		this._debug('_dumpExamRec(): examRec.randomize=    ' + examRec.getValue('randomize'));
+		this._debug('_dumpExamRec(): examRec.min_score=    ' + examRec.getValue('min_score'));
+		this._debug('_dumpExamRec(): examRec.max_questions=' + examRec.getValue('max_questions'));
+		this._debug('_dumpExamRec(): *************************************');
+		
+	},
+	
+	/*
+ 	* _hasDupes - check for duplicate values in a field in the object
+ 	*
+ 	* @param exam_id - the exam ID to review
+ 	* @param element - field to check for uniqueness
+ 	*
+ 	* @return boolean - true=has duplicates
+ 	*/
+	_hasDupes : function(exam_id, element) {
+		
+		var ga = new GlideAggregate(this.questionTable);
+		
+		this._debug('_checkDupes(): looking for duplicate: ' + element);
+		
+		ga.addAggregate('COUNT', element);
+		ga.addQuery('exam', exam_id);
+		ga.query();
+		
+		while (ga.next()) {
+			var fPrime = eval('ga.' + element);
+			var count = ga.getAggregate('COUNT', element);
+			
+			if (count > 1) {
+				this._debug('_hasDupes(): duplicate ' + element + ' found');
+				return true;
+			}
+		}
+		
+		return false;
+	},
+	
+	/*
+ 	* _shuffle - scramble an array order
+ 	*
+ 	* @param a - array to shuffle
+ 	* @return array of shuffled elements
+ 	*
+ 	*/
+	_shuffle : function(a) {
+		
+		var d, c, b = a.length;
+		
+		while (b) {
+			c = Math.floor(Math.random() * b);
+			d = a[--b];
+			a[b] = a[c];
+			a[c] = d;
+		}
+		
+		return a;
+	},
+		
+	type: 'Util'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2016-11-13 15:02:43</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_id>e83393bddb07e2002e38711ebf96197c</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Util</sys_name>
+        <sys_package display_value="Exam Manager" source="x_snc_exam">1d8ae19913c722001098b5f12244b098</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Exam Manager">1d8ae19913c722001098b5f12244b098</sys_scope>
+        <sys_update_name>sys_script_include_e83393bddb07e2002e38711ebf96197c</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2016-11-13 15:02:43</sys_updated_on>
+    </sys_script_include>
+</record_update>

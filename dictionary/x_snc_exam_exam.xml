@@ -2,7 +2,7 @@
 <database>
     <element label="Exam" max_length="40" name="x_snc_exam_exam" type="collection">
         <element default="true" label="Active" max_length="40" name="active" type="boolean"/>
-        <element label="Administrator" mandatory="true" max_length="32" name="administrator" reference="sys_user" reference_qual="active=true^EQ" reference_qual_condition="active=true^EQ" type="reference"/>
+        <element label="Administrator" max_length="32" name="administrator" reference="sys_user" reference_qual="active=true^EQ" reference_qual_condition="active=true^EQ" type="reference"/>
         <element label="Message to send user on fail" max_length="8000" name="fail_notification" type="html"/>
         <element label="Max questions" mandatory="true" max_length="40" name="max_questions" type="integer"/>
         <element default="9999" label="Max attempts" max_length="40" name="max_retries" type="integer"/>
@@ -19,7 +19,7 @@
         <element label="Message to send user when created" max_length="8000" name="ready_notification" type="html"/>
         <element default="true" label="Allow review on completion" max_length="40" name="review_on_complete" type="boolean"/>
         <element label="Short description" max_length="100" name="short_description" type="string"/>
-        <element choice="1" label="Show answers on fail" mandatory="true" max_length="40" name="show_answers_on_fail" type="choice">
+        <element choice="1" label="Show answers on fail" max_length="40" name="show_answers_on_fail" type="choice">
             <choice>
                 <element label="Always" sequence="0" value="always"/>
                 <element label="Only after pass" sequence="1" value="only_after_pass"/>
