@@ -4,8 +4,13 @@
         <element default="true" label="Active" max_length="40" name="active" type="boolean"/>
         <element default="javascript:gs.getUserID()" dynamic_default_value="2fd8e97bef3221002841f7f775c0fbc1" label="Instructor" max_length="32" name="instructor" reference="sys_user" reference_qual="active=true^EQ" reference_qual_condition="active=true^EQ" type="reference" use_dynamic_default="true"/>
         <element label="Name" max_length="100" name="name" type="string"/>
-        <element choice="1" default="nothing" label="User delete action" max_length="40" name="user_delete_action" type="choice">
-            <choice/>
+        <element choice="3" default="nothing" label="User delete action" max_length="40" name="user_delete_action" type="choice">
+            <choice>
+                <element label="Nothing" sequence="0" value="nothing"/>
+                <element label="Remove" sequence="1" value="remove"/>
+                <element label="Remove Inactive" sequence="2" value="remove_inactive"/>
+                <element label="Unlink" sequence="3" value="unlink"/>
+            </choice>
         </element>
         <index name="index">
             <element name="instructor"/>

@@ -20,7 +20,11 @@
         <element default="true" label="Allow review on completion" max_length="40" name="review_on_complete" type="boolean"/>
         <element label="Short description" max_length="100" name="short_description" type="string"/>
         <element choice="1" label="Show answers on fail" mandatory="true" max_length="40" name="show_answers_on_fail" type="choice">
-            <choice/>
+            <choice>
+                <element label="Always" sequence="0" value="always"/>
+                <element label="Only after pass" sequence="1" value="only_after_pass"/>
+                <element label="Never" sequence="2" value="never"/>
+            </choice>
         </element>
         <element default="true" label="Show score" max_length="40" name="show_score" type="boolean"/>
         <index name="index">

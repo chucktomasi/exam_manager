@@ -3,12 +3,12 @@
     <element label="Question" max_length="40" name="x_snc_exam_question" type="collection">
         <element default="true" label="Active" max_length="40" name="active" type="boolean"/>
         <element label="Category" max_length="32" name="category" reference="x_snc_exam_question_category" type="reference"/>
-        <element label="Exam" max_length="32" name="exam" reference="x_snc_exam_exam" type="reference"/>
+        <element label="Exam" mandatory="true" max_length="32" name="exam" reference="x_snc_exam_exam" type="reference"/>
         <element label="Force answer order" max_length="40" name="force_answer_order" type="boolean"/>
         <element label="Image" max_length="40" name="image" type="user_image"/>
         <element label="Number" max_length="40" name="number" type="string"/>
-        <element label="Order" max_length="40" name="order" type="integer"/>
-        <element display="true" label="Text" max_length="4000" name="text" type="string"/>
+        <element label="Order" mandatory="true" max_length="40" name="order" type="integer"/>
+        <element display="true" label="Text" mandatory="true" max_length="4000" name="text" type="string"/>
         <index name="index">
             <element name="exam"/>
         </index>

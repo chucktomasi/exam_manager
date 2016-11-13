@@ -4,47 +4,47 @@
         <sys_ui_list_element action="INSERT_OR_UPDATE">
             <average_value>false</average_value>
             <element>name</element>
-            <list_id display_value="x_snc_exam_group" element="NULL" name="x_snc_exam_group" parent="NULL" relationship="NULL" sys_domain="global" view="Default view">8f0a7f6ddb03e2002e38711ebf9619fb</list_id>
+            <list_id display_value="x_snc_exam_group" element="NULL" name="x_snc_exam_group" parent="NULL" relationship="NULL" sys_domain="global" view="Default view">884ee8bddb43e2002e38711ebf9619c6</list_id>
             <max_value>false</max_value>
             <min_value>false</min_value>
             <position>0</position>
             <sum>false</sum>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2016-11-12 23:03:16</sys_created_on>
-            <sys_id>c30a7f6ddb03e2002e38711ebf9619fc</sys_id>
+            <sys_created_on>2016-11-13 02:51:21</sys_created_on>
+            <sys_id>8c4ee8bddb43e2002e38711ebf9619c6</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2016-11-12 23:03:16</sys_updated_on>
+            <sys_updated_on>2016-11-13 02:51:21</sys_updated_on>
         </sys_ui_list_element>
         <sys_ui_list_element action="INSERT_OR_UPDATE">
             <average_value>false</average_value>
             <element>active</element>
-            <list_id display_value="x_snc_exam_group" element="NULL" name="x_snc_exam_group" parent="NULL" relationship="NULL" sys_domain="global" view="Default view">8f0a7f6ddb03e2002e38711ebf9619fb</list_id>
+            <list_id display_value="x_snc_exam_group" element="NULL" name="x_snc_exam_group" parent="NULL" relationship="NULL" sys_domain="global" view="Default view">884ee8bddb43e2002e38711ebf9619c6</list_id>
             <max_value>false</max_value>
             <min_value>false</min_value>
             <position>1</position>
             <sum>false</sum>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2016-11-12 23:03:16</sys_created_on>
-            <sys_id>470a7f6ddb03e2002e38711ebf9619fc</sys_id>
+            <sys_created_on>2016-11-13 02:51:21</sys_created_on>
+            <sys_id>004ee8bddb43e2002e38711ebf9619c7</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2016-11-12 23:03:16</sys_updated_on>
+            <sys_updated_on>2016-11-13 02:51:21</sys_updated_on>
         </sys_ui_list_element>
         <sys_ui_list_element action="INSERT_OR_UPDATE">
             <average_value>false</average_value>
-            <element>user_delete_action</element>
-            <list_id display_value="x_snc_exam_group" element="NULL" name="x_snc_exam_group" parent="NULL" relationship="NULL" sys_domain="global" view="Default view">8f0a7f6ddb03e2002e38711ebf9619fb</list_id>
+            <element>instructor</element>
+            <list_id display_value="x_snc_exam_group" element="NULL" name="x_snc_exam_group" parent="NULL" relationship="NULL" sys_domain="global" view="Default view">884ee8bddb43e2002e38711ebf9619c6</list_id>
             <max_value>false</max_value>
             <min_value>false</min_value>
             <position>2</position>
             <sum>false</sum>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2016-11-12 23:03:16</sys_created_on>
-            <sys_id>c70a7f6ddb03e2002e38711ebf9619fc</sys_id>
+            <sys_created_on>2016-11-13 02:51:21</sys_created_on>
+            <sys_id>804ee8bddb43e2002e38711ebf9619c7</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2016-11-12 23:03:16</sys_updated_on>
+            <sys_updated_on>2016-11-13 02:51:21</sys_updated_on>
         </sys_ui_list_element>
         <sys_ui_list action="INSERT_OR_UPDATE">
             <average_value>false</average_value>
@@ -58,11 +58,11 @@
             <sum>false</sum>
             <sys_class_name>sys_ui_list</sys_class_name>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2016-11-12 23:03:16</sys_created_on>
+            <sys_created_on>2016-11-13 02:51:21</sys_created_on>
             <sys_customer_update>true</sys_customer_update>
             <sys_domain>global</sys_domain>
             <sys_domain_path>/</sys_domain_path>
-            <sys_id>8f0a7f6ddb03e2002e38711ebf9619fb</sys_id>
+            <sys_id>884ee8bddb43e2002e38711ebf9619c6</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_name>x_snc_exam_group</sys_name>
             <sys_package display_value="Exam Manager" source="x_snc_exam">1d8ae19913c722001098b5f12244b098</sys_package>
@@ -71,7 +71,7 @@
             <sys_scope display_value="Exam Manager">1d8ae19913c722001098b5f12244b098</sys_scope>
             <sys_update_name>sys_ui_list_x_snc_exam_group_null</sys_update_name>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2016-11-12 23:03:16</sys_updated_on>
+            <sys_updated_on>2016-11-13 02:51:21</sys_updated_on>
             <sys_user/>
             <view display_value="Default view" name="NULL">Default view</view>
             <view_name/>
