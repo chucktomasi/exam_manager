@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_script_fix">
+    <sys_script_fix action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <before>false</before>
+        <description>Migrate the global app data to the scoped app tables</description>
+        <flush_cache>false</flush_cache>
+        <name>Exam Migration</name>
+        <run_once>true</run_once>
+        <script><![CDATA[// Fix script to migrate legacy Exam data to new tables
+// Method (indicated by table order in the map object below.)
+//	- Copy Exam (save each old/new sys_id)
+//  - Copy Question Categories (save sys_ids)
+//  - Copy Related questions (save each old/new sys_id)
+//  - Copy Related answers (using each old/new sys_id) & save new sys_id
+//  - Copy Groups (using new exam sys_ids)
+//  - Copy Exam Group grmember (using exam & group sys_ids)
+//  - Copy Exam User grmember (using group sys_ids)
+//  - Copy Score records (save sys_id & use existing exam sys_ids)
+//  - Copy Response Records
+
+var map = [  
+   {  
+      "table":{  
+         "oldName":"exam",
+         "newName":"x_snc_exam_exam"
+      },
+      "fieldMap":[  
+         {  
+            "oldName":"active",
+            "newName":"active",
+            "newlink":false
+         },
+         {  
+            "oldName":"administrator",
+            "newName":"administrator",
+            "newlink":false
+         },
+         {  
+            "oldName":"fail_notification",
+            "newName":"fail_notification",
+            "newlink":false
+         },
+         {  
+            "oldName":"max_questions",
+            "newName":"max_questions",
+            "newlink":false
+         },
+         {  
+            "oldName":"max_retries",
+            "newName":"max_retries",
+            "newlink":false
+         },
+         {  
+            "oldName":"min_score",
+            "newName":"min_score",
+            "newlink":false
+         },
+         {  
+            "oldName":"name",
+            "newName":"name",
+            "newlink":false
+         },
+         {  
+            "oldName":"notify_admin_on_fail",
+            "newName":"notify_admin_on_fail",
+            "newlink":false
+         },
+         {  
+            "oldName":"notify_admin_on_pass",
+            "newName":"notify_admin_on_pass",
+            "newlink":false
+         },
+         {  
+            "oldName":"notify_user_on_fail",
+            "newName":"notify_user_on_fail",
+            "newlink":false
+         },
+         {  
+            "oldName":"notify_user_on_pass",
+            "newName":"notify_user_on_pass",
+            "newlink":false
+         },
+         {  
+            "oldName":"notify_when_ready",
+            "newName":"notify_user_when_ready",
+            "newlink":false
+         },
+         {  
+            "oldName":"pass_notification",
+            "newName":"pass_notification",
+            "newlink":false
+         },
+         {  
+            "oldName":"randomize",
+            "newName":"randomize_questions",
+            "newlink":false
+         },
+         {  
+            "oldName":"randomize_answers",
+            "newName":"randomize_answers",
+            "newlink":false
+         },
+         {  
+            "oldName":"ready_notification",
+            "newName":"ready_notification",
+            "newlink":false
+         },
+         {  
+            "oldName":"review_on_complete",
+            "newName":"review_on_complete",
+            "newlink":false
+         },
+         {  
+            "oldName":"short_description",
+            "newName":"short_description",
+            "newlink":false
+         },
+         {  
+            "oldName":"show_answers",
+            "newName":"show_answers_on_fail",
+            "newlink":false
+         },
+         {  
+            "oldName":"show_score",
+            "newName":"show_score",
+            "newlink":false
+         }
+      ]
+   },
+   {  
+      "table":{  
+         "oldName":"exam_question_category",
+         "newName":"x_snc_exam_question_category"
+      },
+      "fieldMap":[  
+         {  
+            "oldName":"exam",
+            "newName":"exam",
+            "newlink":true
+         },
+         {  
+            "oldName":"name",
+            "newName":"name",
+            "newlink":false
+         }
+      ]
+   },
+   {  
+      "table":{  
+         "oldName":"exam_question",
+         "newName":"x_snc_exam_question"
+      },
+      "fieldMap":[  
+         {  
+            "oldName":"active",
+            "newName":"active",
+            "newlink":false
+         },
+         {  
+            "oldName":"category",
+            "newName":"category",
+            "newlink":false
+         },
+         {  
+            "oldName":"exam",
+            "newName":"exam",
+            "newlink":true
+         },
+         {  
+            "oldName":"force_answer_order",
+            "newName":"force_answer_order",
+            "newlink":false
+         },
+         {  
+            "oldName":"image",
+            "newName":"image",
+            "newlink":false
+         },
+         {  
+            "oldName":"number",
+            "newName":"number",
+            "newlink":false
+         },
+         {  
+            "oldName":"order",
+            "newName":"order",
+            "newlink":false
+         },
+         {  
+            "oldName":"text",
+            "newName":"text",
+            "newlink":false
+         }
+      ]
+   },
+   {  
+      "table":{  
+         "oldName":"exam_answer",
+         "newName":"x_snc_exam_answer"
+      },
+      "fieldMap":[  
+         {  
+            "oldName":"active",
+            "newName":"active",
+            "newlink":false
+         },
+         {  
+            "oldName":"correct",
+            "newName":"correct",
+            "newlink":false
+         },
+         {  
+            "oldName":"order",
+            "newName":"order",
+            "newlink":false
+         },
+         {  
+            "oldName":"question",
+            "newName":"question",
+            "newlink":true
+         },
+         {  
+            "oldName":"text",
+            "newName":"text",
+            "newlink":false
+         }
+      ]
+   },
+   {  
+      "table":{  
+         "oldName":"exam_group",
+         "newName":"x_snc_exam_group"
+      },
+      "fieldMap":[  
+         {  
+            "oldName":"active",
+            "newName":"active",
+            "newlink":false
+         },
+         {  
+            "oldName":"instructor",
+            "newName":"instructor",
+            "newlink":false
+         },
+         {  
+            "oldName":"name",
+            "newName":"name",
+            "newlink":false
+         },
+         {  
+            "oldName":"user_delete_action",
+            "newName":"user_delete_action",
+            "newlink":false
+         }
+      ]
+   },
+   {  
+      "table":{  
+         "oldName":"exam_group_grmember",
+         "newName":"x_snc_exam_group_grmember"
+      },
+      "fieldMap":[  
+         {  
+            "oldName":"exam",
+            "newName":"exam",
+            "newlink":true
+         },
+         {  
+            "oldName":"group",
+            "newName":"group",
+            "newlink":true
+         },
+         {  
+            "oldName":"state",
+            "newName":"state",
+            "newlink":false
+         },
+         {  
+            "oldName":"state_details",
+            "newName":"state_details",
+            "newlink":false
+         }
+      ]
+   },
+   {  
+      "table":{  
+         "oldName":"exam_user_grmember",
+         "newName":"x_snc_exam_user_grmember"
+      },
+      "fieldMap":[  
+         {  
+            "oldName":"group",
+            "newName":"group",
+            "newlink":true
+         },
+         {  
+            "oldName":"user",
+            "newName":"user",
+            "newlink":false
+         }
+      ]
+   },
+   {  
+      "table":{  
+         "oldName":"exam_score",
+         "newName":"x_snc_exam_score"
+      },
+      "fieldMap":[  
+         {  
+            "oldName":"active",
+            "newName":"active",
+            "newlink":false
+         },
+         {  
+            "oldName":"attempt",
+            "newName":"attempt",
+            "newlink":false
+         },
+         {  
+            "oldName":"email",
+            "newName":"email",
+            "newlink":false
+         },
+         {  
+            "oldName":"exam",
+            "newName":"exam",
+            "newlink":true
+         },
+         {  
+            "oldName":"group",
+            "newName":"group",
+            "newlink":true
+         },
+         {  
+            "oldName":"pass_fail",
+            "newName":"pass_fail",
+            "newlink":false
+         },
+         {  
+            "oldName":"percent",
+            "newName":"percent",
+            "newlink":false
+         },
+         {  
+            "oldName":"possible",
+            "newName":"possible",
+            "newlink":false
+         },
+         {  
+            "oldName":"score",
+            "newName":"score",
+            "newlink":false
+         },
+         {  
+            "oldName":"state",
+            "newName":"state",
+            "newlink":false
+         },
+         {  
+            "oldName":"user",
+            "newName":"user",
+            "newlink":false
+         }
+      ]
+   },
+   {  
+      "table":{  
+         "oldName":"exam_response",
+         "newName":"x_snc_exam_response"
+      },
+      "fieldMap":[  
+         {  
+            "oldName":"answer",
+            "newName":"answer",
+            "newlink":true
+         },
+         {  
+            "oldName":"answer_map",
+            "newName":"answer_map",
+            "newlink":false
+         },
+         {  
+            "oldName":"question",
+            "newName":"question",
+            "newlink":true
+         },
+         {  
+            "oldName":"score",
+            "newName":"score",
+            "newlink":true
+         },
+         {  
+            "oldName":"sequence",
+            "newName":"sequence",
+            "newlink":false
+         }
+      ]
+   }
+];
+
+var obj = {};
+
+for (var i = 0; i < map.length; i++) {
+	// extract old/new table names
+	var oldTable = map[i].table.oldName;
+	var newTable = map[i].table.newName;
+	gs.debug(i + ': old Table=' + oldTable + ' newTable=' + newTable);
+	
+	obj[oldTable] = {}; // declare a space to save sys_ids
+	
+	// get old record
+	var oldGr = new GlideRecord(oldTable);
+	oldGr.query();
+	gs.debug(oldGr.getRowCount() + ' records found');
+	
+	while (oldGr.next()) {
+		var oldSysID = oldGr.getValue('sys_id');
+		
+		// gs.debug('>>>Old Record: ' + oldGr.getDisplayValue());
+		// Create new Record
+		var newGr = new GlideRecord(newTable);
+		newGr.newRecord();
+		newGr.setWorkflow(false);
+		
+		// Get fields
+		for (f = 0; f < map[i].fieldMap.length; f++) {
+			var field = map[i].fieldMap[f];
+			var oldField = field.oldName;
+			var newField = field.newName;
+			
+			var oldValue = oldGr.getValue(oldField);
+			
+			
+			// Check if we need to look up a previous sys_id (e.g. new exam rec)
+			if (field.newlink) {
+				var ref = oldGr[oldField].getRefRecord();
+				var refClass = ref.getTableName();
+				// gs.debug('refClass=' + refClass + ' oldSysID=' + oldSysID + ' -- ' + newTable + '.' + newField + '=' + obj[refClass][oldValue]);
+				newGr.setValue(newField, obj[refClass][oldValue]);
+			} else {
+				// Or just copy the existing value (e.g. users)
+				newGr.setValue(newField, oldValue);
+			}
+			
+			// gs.debug(f + ': mapping ' + oldTable + '.' + oldField + '-->' + newTable + '.' + newField);
+		}
+		obj[oldTable][oldSysID] = newGr.insert();
+	}
+}]]></script>
+        <sys_class_name>sys_script_fix</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2016-11-14 22:46:33</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_id>6708c2d2db4fe2002e38711ebf96192f</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>Exam Migration</sys_name>
+        <sys_package display_value="Exam Manager" source="x_snc_exam">1d8ae19913c722001098b5f12244b098</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Exam Manager">1d8ae19913c722001098b5f12244b098</sys_scope>
+        <sys_update_name>sys_script_fix_6708c2d2db4fe2002e38711ebf96192f</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2016-11-14 23:09:10</sys_updated_on>
+        <unloadable>false</unloadable>
+    </sys_script_fix>
+</record_update>
