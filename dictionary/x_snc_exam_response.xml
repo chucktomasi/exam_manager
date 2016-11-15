@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <database>
-    <element label="Response" max_length="40" name="x_snc_exam_response" type="collection">
+    <element label="Response" max_length="40" name="x_snc_exam_response" sizeclass="10000" type="collection">
         <element label="Answer" max_length="32" name="answer" reference="x_snc_exam_answer" reference_qual="javascript:new ExamUtil().responseAnswerRefQual(current)" type="reference" use_reference_qualifier="advanced"/>
         <element label="Answer map" max_length="1000" name="answer_map" type="string"/>
         <element label="Question" max_length="32" name="question" reference="x_snc_exam_question" reference_qual="javascript:new ExamUtil().responseQuestionRefQual(current);" type="reference" use_reference_qualifier="advanced"/>

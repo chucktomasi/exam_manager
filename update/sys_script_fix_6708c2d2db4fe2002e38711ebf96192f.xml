@@ -18,6 +18,7 @@
 //  - Copy Exam User grmember (using group sys_ids)
 //  - Copy Score records (save sys_id & use existing exam sys_ids)
 //  - Copy Response Records
+// (implicitly copies attachments and image field attachments)
 
 var map = [  
    {  
@@ -396,7 +397,7 @@ var map = [
             "newlink":false
          }
       ]
-   }
+    }
 ];
 
 var obj = {};
@@ -417,7 +418,7 @@ for (var i = 0; i < map.length; i++) {
 	while (oldGr.next()) {
 		var oldSysID = oldGr.getValue('sys_id');
 		
-		// gs.debug('>>>Old Record: ' + oldGr.getDisplayValue());
+		gs.debug('>>>Old Record: ' + oldGr.getDisplayValue());
 		// Create new Record
 		var newGr = new GlideRecord(newTable);
 		newGr.newRecord();
@@ -436,16 +437,28 @@ for (var i = 0; i < map.length; i++) {
 			if (field.newlink) {
 				var ref = oldGr[oldField].getRefRecord();
 				var refClass = ref.getTableName();
-				// gs.debug('refClass=' + refClass + ' oldSysID=' + oldSysID + ' -- ' + newTable + '.' + newField + '=' + obj[refClass][oldValue]);
+				gs.debug('refClass=' + refClass + ' oldSysID=' + oldSysID + ' -- ' + newTable + '.' + newField + '=' + obj[refClass][oldValue]);
 				newGr.setValue(newField, obj[refClass][oldValue]);
+				
 			} else {
 				// Or just copy the existing value (e.g. users)
 				newGr.setValue(newField, oldValue);
 			}
-			
+						
 			// gs.debug(f + ': mapping ' + oldTable + '.' + oldField + '-->' + newTable + '.' + newField);
 		}
-		obj[oldTable][oldSysID] = newGr.insert();
+		
+		var newSysID = newGr.insert();
+		obj[oldTable][oldSysID] = newSysID;
+
+		// Copy attachments
+		GlideSysAttachment.copy(oldTable, oldSysID, newTable, newSysID);
+		
+		// Copy image fields too
+		var newTableZ = 'ZZ_YY' + newTable;
+		var oldTableZ = 'ZZ_YY' + oldTable;
+		GlideSysAttachment.copy(oldTableZ, oldSysID, newTableZ, newSysID);
+
 	}
 }]]></script>
         <sys_class_name>sys_script_fix</sys_class_name>
@@ -453,7 +466,7 @@ for (var i = 0; i < map.length; i++) {
         <sys_created_on>2016-11-14 22:46:33</sys_created_on>
         <sys_customer_update>true</sys_customer_update>
         <sys_id>6708c2d2db4fe2002e38711ebf96192f</sys_id>
-        <sys_mod_count>2</sys_mod_count>
+        <sys_mod_count>3</sys_mod_count>
         <sys_name>Exam Migration</sys_name>
         <sys_package display_value="Exam Manager" source="x_snc_exam">1d8ae19913c722001098b5f12244b098</sys_package>
         <sys_policy/>
@@ -461,7 +474,7 @@ for (var i = 0; i < map.length; i++) {
         <sys_scope display_value="Exam Manager">1d8ae19913c722001098b5f12244b098</sys_scope>
         <sys_update_name>sys_script_fix_6708c2d2db4fe2002e38711ebf96192f</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2016-11-14 23:09:10</sys_updated_on>
+        <sys_updated_on>2016-11-15 18:11:42</sys_updated_on>
         <unloadable>false</unloadable>
     </sys_script_fix>
 </record_update>

@@ -4,25 +4,25 @@
         <sys_ui_annotation action="INSERT_OR_UPDATE">
             <is_plain_text>false</is_plain_text>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2016-11-12 23:00:44</sys_created_on>
-            <sys_id>3d79fbaddb03e2002e38711ebf9619a2</sys_id>
+            <sys_created_on>2016-11-15 17:01:37</sys_created_on>
+            <sys_id>fa048aaedb4326002e38711ebf961966</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2016-11-12 23:00:44</sys_updated_on>
-            <text>exam_form_results_section_help</text>
+            <sys_updated_on>2016-11-15 17:01:37</sys_updated_on>
+            <text>x_snc_exam_form_results_section_help</text>
             <type display_value="Info Box Blue">753f88a80f930000b12e6903cfe01206</type>
         </sys_ui_annotation>
         <sys_ui_element action="INSERT_OR_UPDATE">
-            <element>3d79fbaddb03e2002e38711ebf9619a2</element>
+            <element>fa048aaedb4326002e38711ebf961966</element>
             <position>0</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2016-11-12 23:00:44</sys_created_on>
-            <sys_id>bd79fbaddb03e2002e38711ebf9619a2</sys_id>
+            <sys_created_on>2016-11-15 17:01:37</sys_created_on>
+            <sys_id>7e048aaedb4326002e38711ebf961966</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="Results" display_value="Results" name="x_snc_exam_exam" sys_domain="global" view="Default view">b3c8f7addb03e2002e38711ebf961990</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2016-11-12 23:00:44</sys_updated_on>
+            <sys_updated_on>2016-11-15 17:01:37</sys_updated_on>
             <sys_user/>
             <type>annotation</type>
         </sys_ui_element>
@@ -30,13 +30,13 @@
             <element>.begin_split</element>
             <position>1</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2016-11-12 23:00:44</sys_created_on>
-            <sys_id>3179fbaddb03e2002e38711ebf9619a3</sys_id>
+            <sys_created_on>2016-11-15 17:01:37</sys_created_on>
+            <sys_id>fe048aaedb4326002e38711ebf961966</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="Results" display_value="Results" name="x_snc_exam_exam" sys_domain="global" view="Default view">b3c8f7addb03e2002e38711ebf961990</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2016-11-12 23:00:44</sys_updated_on>
+            <sys_updated_on>2016-11-15 17:01:37</sys_updated_on>
             <sys_user/>
             <type>.begin_split</type>
         </sys_ui_element>
@@ -44,13 +44,13 @@
             <element>show_score</element>
             <position>2</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2016-11-12 23:00:44</sys_created_on>
-            <sys_id>b179fbaddb03e2002e38711ebf9619a3</sys_id>
+            <sys_created_on>2016-11-15 17:01:37</sys_created_on>
+            <sys_id>72048aaedb4326002e38711ebf961967</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="Results" display_value="Results" name="x_snc_exam_exam" sys_domain="global" view="Default view">b3c8f7addb03e2002e38711ebf961990</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2016-11-12 23:00:44</sys_updated_on>
+            <sys_updated_on>2016-11-15 17:01:37</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
@@ -58,13 +58,13 @@
             <element>review_on_complete</element>
             <position>3</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2016-11-12 23:00:44</sys_created_on>
-            <sys_id>3579fbaddb03e2002e38711ebf9619a3</sys_id>
+            <sys_created_on>2016-11-15 17:01:37</sys_created_on>
+            <sys_id>f2048aaedb4326002e38711ebf961967</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="Results" display_value="Results" name="x_snc_exam_exam" sys_domain="global" view="Default view">b3c8f7addb03e2002e38711ebf961990</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2016-11-12 23:00:44</sys_updated_on>
+            <sys_updated_on>2016-11-15 17:01:37</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
@@ -72,13 +72,13 @@
             <element>.split</element>
             <position>4</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2016-11-12 23:00:44</sys_created_on>
-            <sys_id>b579fbaddb03e2002e38711ebf9619a3</sys_id>
+            <sys_created_on>2016-11-15 17:01:37</sys_created_on>
+            <sys_id>76048aaedb4326002e38711ebf961967</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="Results" display_value="Results" name="x_snc_exam_exam" sys_domain="global" view="Default view">b3c8f7addb03e2002e38711ebf961990</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2016-11-12 23:00:44</sys_updated_on>
+            <sys_updated_on>2016-11-15 17:01:37</sys_updated_on>
             <sys_user/>
             <type>.split</type>
         </sys_ui_element>
@@ -86,13 +86,13 @@
             <element>show_answers_on_fail</element>
             <position>5</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2016-11-12 23:00:44</sys_created_on>
-            <sys_id>3979fbaddb03e2002e38711ebf9619a3</sys_id>
+            <sys_created_on>2016-11-15 17:01:37</sys_created_on>
+            <sys_id>f6048aaedb4326002e38711ebf961967</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="Results" display_value="Results" name="x_snc_exam_exam" sys_domain="global" view="Default view">b3c8f7addb03e2002e38711ebf961990</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2016-11-12 23:00:44</sys_updated_on>
+            <sys_updated_on>2016-11-15 17:01:37</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>

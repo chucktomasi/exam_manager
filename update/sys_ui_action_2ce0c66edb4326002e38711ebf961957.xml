@@ -4,8 +4,8 @@
         <action_name/>
         <active>true</active>
         <client>false</client>
-        <comments>Recalculate the scores</comments>
-        <condition>gs.hasRole('x_snc_exam.admin') &amp;&amp; !current.active</condition>
+        <comments>Use the question order to determine what 'number' should be attached to each question (use active questions only)</comments>
+        <condition>gs.hasRole('x_snc_exam.admin')</condition>
         <form_action>true</form_action>
         <form_button>false</form_button>
         <form_context_menu>false</form_context_menu>
@@ -18,46 +18,46 @@
         <list_context_menu>false</list_context_menu>
         <list_link>false</list_link>
         <list_save_with_form_button>false</list_save_with_form_button>
-        <name>Recalculate scores</name>
+        <name>Renumber questions based on order</name>
         <onclick/>
-        <order>100</order>
-        <script><![CDATA[var e        = new ExamUtil();
-var msgArray = [];
-var a        = e.scoreExam(current);
+        <order>200</order>
+        <script><![CDATA[var q = new GlideRecord('x_snc_exam_question');
+var n = 1;
 
-if (a != '-1') {
-	msgArray.push(parseInt(a));
-    gs.addInfoMessage(gs.getMessage('x_snc_exam_score_recalculated', msgArray));
-    
-} else {
-	msgArray.push(current.user.getDisplayValue());
-    gs.addErrorMessage(gs.getMessage('x_snc_exam_not_completed', msgArray));
+q.addQuery('exam', current.getValue('sys_id'));
+q.addQuery('active', true);
+q.orderBy('order');
+q.query();
+
+while (q.next()) {
+	q.number = n + '';
+	q.update();
+	++n;
 }
-
-action.setRedirectURL(current);
-]]></script>
-        <show_insert>true</show_insert>
+gs.addInfoMessage(gs.getMessage('x_snc_exam_questions_renumbered'));
+action.setRedirectURL(current);]]></script>
+        <show_insert>false</show_insert>
         <show_multiple_update>false</show_multiple_update>
         <show_query>false</show_query>
         <show_update>true</show_update>
         <sys_class_name>sys_ui_action</sys_class_name>
         <sys_created_by>admin</sys_created_by>
-        <sys_created_on>2016-11-13 22:42:38</sys_created_on>
+        <sys_created_on>2016-11-15 16:51:16</sys_created_on>
         <sys_customer_update>true</sys_customer_update>
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
-        <sys_id>59ae744edb87e2002e38711ebf96196a</sys_id>
+        <sys_id>2ce0c66edb4326002e38711ebf961957</sys_id>
         <sys_mod_count>1</sys_mod_count>
-        <sys_name>Recalculate scores</sys_name>
+        <sys_name>Renumber questions based on order</sys_name>
         <sys_overrides/>
         <sys_package display_value="Exam Manager" source="x_snc_exam">1d8ae19913c722001098b5f12244b098</sys_package>
         <sys_policy/>
         <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
         <sys_scope display_value="Exam Manager">1d8ae19913c722001098b5f12244b098</sys_scope>
-        <sys_update_name>sys_ui_action_59ae744edb87e2002e38711ebf96196a</sys_update_name>
+        <sys_update_name>sys_ui_action_2ce0c66edb4326002e38711ebf961957</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2016-11-15 17:00:29</sys_updated_on>
-        <table>x_snc_exam_score</table>
+        <sys_updated_on>2016-11-15 16:51:48</sys_updated_on>
+        <table>x_snc_exam_exam</table>
         <ui11_compatible>true</ui11_compatible>
         <ui16_compatible>true</ui16_compatible>
     </sys_ui_action>

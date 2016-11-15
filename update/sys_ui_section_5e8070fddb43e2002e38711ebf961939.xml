@@ -4,25 +4,25 @@
         <sys_ui_annotation action="INSERT_OR_UPDATE">
             <is_plain_text>false</is_plain_text>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2016-11-13 03:08:05</sys_created_on>
-            <sys_id>d1127031db83e2002e38711ebf961902</sys_id>
-            <sys_mod_count>1</sys_mod_count>
+            <sys_created_on>2016-11-15 17:02:28</sys_created_on>
+            <sys_id>17340eaedb4326002e38711ebf96190b</sys_id>
+            <sys_mod_count>0</sys_mod_count>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2016-11-13 03:08:06</sys_updated_on>
-            <text>exam_score_form_help</text>
+            <sys_updated_on>2016-11-15 17:02:28</sys_updated_on>
+            <text>x_snc_exam_score_form_help</text>
             <type display_value="Info Box Blue">753f88a80f930000b12e6903cfe01206</type>
         </sys_ui_annotation>
         <sys_ui_element action="INSERT_OR_UPDATE">
-            <element>d1127031db83e2002e38711ebf961902</element>
+            <element>17340eaedb4326002e38711ebf96190b</element>
             <position>0</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2016-11-13 03:08:06</sys_created_on>
-            <sys_id>25127031db83e2002e38711ebf961903</sys_id>
+            <sys_created_on>2016-11-15 17:02:28</sys_created_on>
+            <sys_id>97340eaedb4326002e38711ebf96190b</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_exam_score" sys_domain="global" view="Default view">5e8070fddb43e2002e38711ebf961939</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2016-11-13 03:08:06</sys_updated_on>
+            <sys_updated_on>2016-11-15 17:02:28</sys_updated_on>
             <sys_user/>
             <type>annotation</type>
         </sys_ui_element>
@@ -30,13 +30,13 @@
             <element>.begin_split</element>
             <position>1</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2016-11-13 03:08:06</sys_created_on>
-            <sys_id>a5127031db83e2002e38711ebf961903</sys_id>
+            <sys_created_on>2016-11-15 17:02:28</sys_created_on>
+            <sys_id>1b340eaedb4326002e38711ebf96190b</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_exam_score" sys_domain="global" view="Default view">5e8070fddb43e2002e38711ebf961939</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2016-11-13 03:08:06</sys_updated_on>
+            <sys_updated_on>2016-11-15 17:02:28</sys_updated_on>
             <sys_user/>
             <type>.begin_split</type>
         </sys_ui_element>
@@ -44,13 +44,13 @@
             <element>exam</element>
             <position>2</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2016-11-13 03:08:06</sys_created_on>
-            <sys_id>29127031db83e2002e38711ebf961903</sys_id>
+            <sys_created_on>2016-11-15 17:02:28</sys_created_on>
+            <sys_id>9b340eaedb4326002e38711ebf96190b</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_exam_score" sys_domain="global" view="Default view">5e8070fddb43e2002e38711ebf961939</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2016-11-13 03:08:06</sys_updated_on>
+            <sys_updated_on>2016-11-15 17:02:28</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
@@ -58,13 +58,13 @@
             <element>user</element>
             <position>3</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2016-11-13 03:08:06</sys_created_on>
-            <sys_id>a9127031db83e2002e38711ebf961903</sys_id>
+            <sys_created_on>2016-11-15 17:02:28</sys_created_on>
+            <sys_id>1f340eaedb4326002e38711ebf96190b</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_exam_score" sys_domain="global" view="Default view">5e8070fddb43e2002e38711ebf961939</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2016-11-13 03:08:06</sys_updated_on>
+            <sys_updated_on>2016-11-15 17:02:28</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
@@ -72,13 +72,13 @@
             <element>attempt</element>
             <position>4</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2016-11-13 03:08:06</sys_created_on>
-            <sys_id>2d127031db83e2002e38711ebf961903</sys_id>
+            <sys_created_on>2016-11-15 17:02:28</sys_created_on>
+            <sys_id>9f340eaedb4326002e38711ebf96190b</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_exam_score" sys_domain="global" view="Default view">5e8070fddb43e2002e38711ebf961939</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2016-11-13 03:08:06</sys_updated_on>
+            <sys_updated_on>2016-11-15 17:02:28</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
@@ -86,13 +86,13 @@
             <element>state</element>
             <position>5</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2016-11-13 03:08:06</sys_created_on>
-            <sys_id>ad127031db83e2002e38711ebf961903</sys_id>
+            <sys_created_on>2016-11-15 17:02:28</sys_created_on>
+            <sys_id>13340eaedb4326002e38711ebf96190c</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_exam_score" sys_domain="global" view="Default view">5e8070fddb43e2002e38711ebf961939</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2016-11-13 03:08:06</sys_updated_on>
+            <sys_updated_on>2016-11-15 17:02:28</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
@@ -100,13 +100,13 @@
             <element>group</element>
             <position>6</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2016-11-13 03:08:06</sys_created_on>
-            <sys_id>21127031db83e2002e38711ebf961904</sys_id>
+            <sys_created_on>2016-11-15 17:02:28</sys_created_on>
+            <sys_id>93340eaedb4326002e38711ebf96190c</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_exam_score" sys_domain="global" view="Default view">5e8070fddb43e2002e38711ebf961939</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2016-11-13 03:08:06</sys_updated_on>
+            <sys_updated_on>2016-11-15 17:02:28</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
@@ -114,13 +114,13 @@
             <element>.split</element>
             <position>7</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2016-11-13 03:08:06</sys_created_on>
-            <sys_id>a1127031db83e2002e38711ebf961904</sys_id>
+            <sys_created_on>2016-11-15 17:02:28</sys_created_on>
+            <sys_id>17340eaedb4326002e38711ebf96190c</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_exam_score" sys_domain="global" view="Default view">5e8070fddb43e2002e38711ebf961939</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2016-11-13 03:08:06</sys_updated_on>
+            <sys_updated_on>2016-11-15 17:02:28</sys_updated_on>
             <sys_user/>
             <type>.split</type>
         </sys_ui_element>
@@ -128,13 +128,13 @@
             <element>pass_fail</element>
             <position>8</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2016-11-13 03:08:06</sys_created_on>
-            <sys_id>25127031db83e2002e38711ebf961904</sys_id>
+            <sys_created_on>2016-11-15 17:02:28</sys_created_on>
+            <sys_id>97340eaedb4326002e38711ebf96190c</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_exam_score" sys_domain="global" view="Default view">5e8070fddb43e2002e38711ebf961939</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2016-11-13 03:08:06</sys_updated_on>
+            <sys_updated_on>2016-11-15 17:02:28</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
@@ -142,13 +142,13 @@
             <element>score</element>
             <position>9</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2016-11-13 03:08:06</sys_created_on>
-            <sys_id>a5127031db83e2002e38711ebf961904</sys_id>
+            <sys_created_on>2016-11-15 17:02:28</sys_created_on>
+            <sys_id>1b340eaedb4326002e38711ebf96190c</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_exam_score" sys_domain="global" view="Default view">5e8070fddb43e2002e38711ebf961939</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2016-11-13 03:08:06</sys_updated_on>
+            <sys_updated_on>2016-11-15 17:02:28</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
@@ -156,13 +156,13 @@
             <element>possible</element>
             <position>10</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2016-11-13 03:08:06</sys_created_on>
-            <sys_id>29127031db83e2002e38711ebf961904</sys_id>
+            <sys_created_on>2016-11-15 17:02:28</sys_created_on>
+            <sys_id>9b340eaedb4326002e38711ebf96190c</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_exam_score" sys_domain="global" view="Default view">5e8070fddb43e2002e38711ebf961939</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2016-11-13 03:08:06</sys_updated_on>
+            <sys_updated_on>2016-11-15 17:02:28</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
@@ -170,13 +170,13 @@
             <element>percent</element>
             <position>11</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2016-11-13 03:08:06</sys_created_on>
-            <sys_id>a9127031db83e2002e38711ebf961904</sys_id>
+            <sys_created_on>2016-11-15 17:02:28</sys_created_on>
+            <sys_id>1f340eaedb4326002e38711ebf96190c</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_exam_score" sys_domain="global" view="Default view">5e8070fddb43e2002e38711ebf961939</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2016-11-13 03:08:06</sys_updated_on>
+            <sys_updated_on>2016-11-15 17:02:28</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>

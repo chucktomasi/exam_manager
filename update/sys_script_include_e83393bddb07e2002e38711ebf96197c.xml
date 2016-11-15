@@ -45,7 +45,7 @@ Util.prototype = {
 		this._dumpExamRec(examRec);
 		
 		// Start by getting ALL questions
-		this._debug('generateUserResponses(): Getting questions for score_rec=' + scoreRec);
+		gs.debug('generateUserResponses(): Getting questions for score_rec=' + scoreRec);
 		quest.addQuery('active', true);
 		quest.addQuery('exam', scoreRec.exam.sys_id);
 		quest.orderBy('order');
@@ -54,31 +54,31 @@ Util.prototype = {
 		
 		var n = 0;
 		while (quest.next()) {
-			this._debug('--> generateUserResponses(): Pushing: #' + quest.getValue('number') + ' ' + quest.getValue('sys_id') + ' ' + quest.getValue('text'));
+			gs.debug('--> generateUserResponses(): Pushing: #' + quest.getValue('number') + ' ' + quest.getValue('sys_id') + ' ' + quest.getValue('text'));
 			allQuestIdx.push(n);
 			allQuestObj.push(quest.getValue('sys_id'));
 			++n;
 		}
 		
-		this._debug('generateUserResponses(): allQuestIdx=' + allQuestIdx.join(','));
+		gs.debug('generateUserResponses(): allQuestIdx=' + allQuestIdx.join(','));
 		
 		// Scramble the array - always. We'll sort it if the exam says to
 		// Otherwise, we would always get the same first "max_questions" and no randomizing for retakes
 		allQuestIdx = this._shuffle(allQuestIdx);
-		this._debug('generateUserResponses(): shuffled allQuestIdx=' + allQuestIdx.join(','));
+		gs.debug('generateUserResponses(): shuffled allQuestIdx=' + allQuestIdx.join(','));
 		
 		// Truncate it (if necessary)
 		
-		this._debug('generateUserResponses(): allQuestIdx.length=' + allQuestIdx.length);
+		gs.debug('generateUserResponses(): allQuestIdx.length=' + allQuestIdx.length);
 		if (allQuestIdx.length > examRec.max_questions) {
 			allQuestIdx.length = examRec.max_questions;   // If there are more questions than are allowed, truncate
-			this._debug('generateUserResponses(): more questions than needed. Truncating to: ' + allQuestIdx.length);
+			gs.debug('generateUserResponses(): more questions than needed. Truncating to: ' + allQuestIdx.length);
 		}
 		
 		// Sort if the exam says to
 		if (!examRec.randomize) {
 			allQuestIdx.sort(function(a,b){return a-b;}); // Sort these as numbers, not strings
-			this._debug('generateUserResponses(): sorted allQuestIdx=' + allQuestIdx.join(','));
+			gs.debug('generateUserResponses(): sorted allQuestIdx=' + allQuestIdx.join(','));
 		}
 		
 		// Create the response records
@@ -92,7 +92,7 @@ Util.prototype = {
 			resp.sequence = i + 1;
 			
 			resp.insert();
-			this._debug('generateUserResponses(): created record for question #' + allQuestObj[allQuestIdx[i]]);
+			gs.debug('generateUserResponses(): created record for question #' + allQuestObj[allQuestIdx[i]]);
 		}
 		
 		return i;
@@ -114,7 +114,7 @@ Util.prototype = {
 		rGr.addQuery('score', scoreId);
 		rGr.orderBy('sequence');
 		rGr.query();
-		this._debug('getResponses(): count=' + rGr.getRowCount());
+		gs.debug('getResponses(): count=' + rGr.getRowCount());
 		
 		while (rGr.next()) {
 			var ro = {};
@@ -142,11 +142,11 @@ Util.prototype = {
 		
 		var resp = new GlideRecord(this.responseTable);
 		
-		this._debug('deleteUserResponses(): removing records for id=' + score_id);
+		gs.debug('deleteUserResponses(): removing records for id=' + score_id);
 		resp.addQuery('score', score_id);
 		resp.deleteMultiple();
 		
-		this._debug('deleteUserResponses(): responses removed');
+		gs.debug('deleteUserResponses(): responses removed');
 	},
 	
 	/*
@@ -160,7 +160,7 @@ Util.prototype = {
 		
 		var resp  = new GlideRecord(this.responseTable);
 		
-		this._debug('getNextQuestion(): score_id=' + score_id);
+		gs.debug('getNextQuestion(): score_id=' + score_id);
 		resp.addQuery('score', score_id);
 		resp.addNullQuery('answer');
 		resp.orderBy('sequence');
@@ -168,11 +168,11 @@ Util.prototype = {
 		
 		if (resp.next()) {
 			var retVal = resp.getValue('sys_id');
-			this._debug('getNextQuestion(): unaswered response found. Returning: ' + retVal);
+			gs.debug('getNextQuestion(): unaswered response found. Returning: ' + retVal);
 			return retVal;
 		}
 		
-		this._debug('getNextQuestion(): no unanswered responses found. Returning -1');
+		gs.debug('getNextQuestion(): no unanswered responses found. Returning -1');
 		return -1;
 		
 	},
@@ -191,23 +191,23 @@ Util.prototype = {
 		var score       = new GlideRecord(this.scoreTable);
 		var nextAttempt = 2; // Start at 1, so the next attempt is 2
 		
-		this._debug('getNextAttempt(): exam=' + exam_id + ' user=' + user_id);
+		gs.debug('getNextAttempt(): exam=' + exam_id + ' user=' + user_id);
 		score.addQuery('exam', exam_id);
 		score.addQuery('user', user_id);
 		score.orderByDesc('attempt');
 		score.query();
 		
-		if (score.next() && !JSUtil.nil(score.attempt)) {
-			this._debug('getNextAttempt(): highest seen so far is: ' + score.attempt);
+		if (score.next() && score.attempt) {
+			gs.debug('getNextAttempt(): highest seen so far is: ' + score.attempt);
 			nextAttempt = score.attempt + 1;
 			
 			// This is the first
 		} else {
-			this._debug('getNextAttempt(): this is the first attempt');
+			gs.debug('getNextAttempt(): this is the first attempt');
 			nextAttempt = 1;
 		}
 		
-		this._debug('getNextAttempt(): returning: ' + nextAttempt);
+		gs.debug('getNextAttempt(): returning: ' + nextAttempt);
 		
 		return nextAttempt;
 		
@@ -234,32 +234,32 @@ Util.prototype = {
 		
 		while (resp.next()) {
 			++possible;
-			if (JSUtil.nil(resp.answer))
+			if (!resp.answer)
 				return -1;
 			
 			if (resp.answer.correct) {
-				this._debug('scoreExam(): you got #' + resp.question.number + ' correct');
+				gs.debug('scoreExam(): you got #' + resp.question.number + ' correct');
 				++correct;
 				
 			} else {
-				this._debug('scoreExam(): you got #' + resp.question.number + ' wrong');
+				gs.debug('scoreExam(): you got #' + resp.question.number + ' wrong');
 			}
 		}
 		
-		this._debug('scoreExam(): correct  =' + correct);
-		this._debug('scoreExam(): possible =' + possible);
-		this._debug('scoreExam(): min_score=' + scoreRec.exam.min_score);
+		gs.debug('scoreExam(): correct  =' + correct);
+		gs.debug('scoreExam(): possible =' + possible);
+		gs.debug('scoreExam(): min_score=' + scoreRec.exam.min_score);
 		
 		scoreRec.score    = correct;
 		scoreRec.possible = possible;
 		scoreRec.percent  = (correct / possible) * 100;
 		
 		if (correct >= scoreRec.exam.min_score) {
-			this._debug('scoreExam(): You PASS!');
+			gs.debug('scoreExam(): You PASS!');
 			scoreRec.pass_fail = 'Pass';
 			
 		} else {
-			this._debug('scoreExam(): Sorry, you fail');
+			gs.debug('scoreExam(): Sorry, you fail');
 			scoreRec.pass_fail = 'Fail';
 		}
 		
@@ -302,11 +302,11 @@ Util.prototype = {
 			answer.orderBy('order');
 			answer.query();
 			
-			this._debug('checkAnswers(): The correct answer to #' + quest.getValue('number') + ': ' + quest.getValue('text'));
+			gs.debug('checkAnswers(): The correct answer to #' + quest.getValue('number') + ': ' + quest.getValue('text'));
 			while (answer.next() && !foundCorrect) {
 				
 				if (answer.correct) {
-					this._debug('checkAnswers(): -->' + answer.getValue('text'));
+					gs.debug('checkAnswers(): -->' + answer.getValue('text'));
 					foundCorrect = true;
 				}
 			}
@@ -317,22 +317,22 @@ Util.prototype = {
 				msgArray.push(quest.getValue('sys_id'));
 				msgArray.push(quest.getValue('number'));
 				
-				gs.addErrorMessage(gs.getMessage('exam_validation_no_correct_answer', msgArray));
-				this._debug('checkAnswers(): --> has no correct answers');
+				gs.addErrorMessage(gs.getMessage('x_snc_exam_validation_no_correct_answer', msgArray));
+				gs.debug('checkAnswers(): --> has no correct answers');
 				++errCount;
 			}
 			
 		}
 		
 		if (this._hasDupes(exam_id, 'number')) {
-			gs.addErrorMessage(gs.getMessage('exam_validation_duplicate_numbers'));
-			this._debug('validateQuestions(): Duplicate numbers found');
+			gs.addErrorMessage(gs.getMessage('x_snc_exam_validation_duplicate_numbers'));
+			gs.debug('validateQuestions(): Duplicate numbers found');
 			++errCount;
 		}
 		
 		if (this._hasDupes(exam_id, 'order')) {
-			gs.addErrorMessage(gs.getMessage('exam_validation_duplicate_order'));
-			this._debug('validateQuestions(): Duplicate orders found');
+			gs.addErrorMessage(gs.getMessage('x_snc_exam_validation_duplicate_order'));
+			gs.debug('validateQuestions(): Duplicate orders found');
 			++errCount;
 		}
 		
@@ -352,11 +352,11 @@ Util.prototype = {
  	*/
 	hasPassedThisExam : function(scoreRec) {
 		
-		this._debug('hasPassedThisExam(): scoreRec.exam.show_answers=' + scoreRec.exam.show_answers);
+		gs.debug('hasPassedThisExam(): scoreRec.exam.show_answers=' + scoreRec.exam.show_answers);
 		if (scoreRec.exam.show_answers == 'always')
 			return true;
 		
-		if (scoreRec.exam.show_answers == 'never' || JSUtil.nil(scoreRec.exam.show_answers))
+		if (scoreRec.exam.show_answers == 'never' || !scoreRec.exam.show_answers)
 			return false;
 		
 		// Now see if they have passed to determine if 'only_on_pass' is true/false
@@ -396,7 +396,7 @@ Util.prototype = {
 		
 		var answer = 'exam=' + resp.score.exam;
 		
-		this._debug('responseQuestionRefQual(): answer=' + answer);
+		gs.debug('responseQuestionRefQual(): answer=' + answer);
 		
 		return answer;
 	},
@@ -413,7 +413,7 @@ Util.prototype = {
 		
 		var answer = 'question=' + resp.question;
 		
-		this._debug('responseAnswerRefQual(): answer=' + answer);
+		gs.debug('responseAnswerRefQual(): answer=' + answer);
 		
 		return answer;
 	},
@@ -431,7 +431,7 @@ Util.prototype = {
 		
 		var url = gs.getProperty('glide.servlet.uri');
 		
-		if (JSUtil.nil(url))
+		if (!url)
 			url = 'https://' + gs.getProperty('instance_name') + '.service-now.com';
 		
 		var answer = url + '/nav_to.do?uri=take_exam.do?sysparm_id=' + score.getValue('sys_id');
@@ -451,7 +451,7 @@ Util.prototype = {
 		
 		var ga = new GlideAggregate(this.scoreTable);
 		
-		this._debug('countScoreRecs(): filterStr=' + filterStr);
+		gs.debug('countScoreRecs(): filterStr=' + filterStr);
 		ga.addAggregate('COUNT');
 		ga.addEncodedQuery(filterStr);
 		ga.query();
@@ -461,7 +461,7 @@ Util.prototype = {
 		if (ga.next()) {
 			count = ga.getAggregate('COUNT');
 		}
-		this._debug('countScoreRecs(): count=' + count);
+		gs.debug('countScoreRecs(): count=' + count);
 		
 		return count;
 		
@@ -515,7 +515,7 @@ Util.prototype = {
 		sGr.orderBy('sys_created_on');
 		sGr.query();
 		
-		this._debug('getScoreList(): count=' + sGr.getRowCount());
+		gs.debug('getScoreList(): count=' + sGr.getRowCount());
 		
 		while (sGr.next()) {
 			var so = {};
@@ -529,9 +529,9 @@ Util.prototype = {
 			so.exam_show_score         = sGr.exam.show_score;
 			so.exam_name               = sGr.exam.getDisplayValue();
 			so.exam_review_on_complete = sGr.exam.review_on_complete;
-			this._debug('getScoreList(): ' + so.exam_name + ' show_score=' + so.exam_show_score);
-			this._debug('getScoreList(): ' + so.exam_name + ' review_on_complete=' + so.exam_review_on_complete);
-			this._debug('getScoreList(): ' + so.exam_name + ' percent=' + so.percent);
+			gs.debug('getScoreList(): ' + so.exam_name + ' show_score=' + so.exam_show_score);
+			gs.debug('getScoreList(): ' + so.exam_name + ' review_on_complete=' + so.exam_review_on_complete);
+			gs.debug('getScoreList(): ' + so.exam_name + ' percent=' + so.percent);
 			scoreList.push(so);
 		}
 		
@@ -565,7 +565,7 @@ Util.prototype = {
 			score.query();
 			
 			if (!score.hasNext()) {
-				this._debug('deleteScoreList(): No score found: exam=' + examID + ' user=' + user_group.getValue('user'));
+				gs.debug('deleteScoreList(): No score found: exam=' + examID + ' user=' + user_group.getValue('user'));
 			} else {
 				score.deleteMultiple();
 			}
@@ -599,7 +599,7 @@ Util.prototype = {
 			// Check if there is already an active score rec for this exam/user/group
 			// If so, just recalc and return
 			if (this._activeGroupScoreRecExists(examgr.getValue('exam'), userID, groupID)) {
-				this._debug('inheritScoreRec(): Active linked GROUP score record already found: ' +
+				gs.debug('inheritScoreRec(): Active linked GROUP score record already found: ' +
 				examgr.exam.getDisplayValue() + ' userID=' + userID + ' groupID=' + groupID);
 				
 				// Recalculate
@@ -612,7 +612,7 @@ Util.prototype = {
 			if (!this._linkActiveUnlinkedScoreRec(examgr.getValue('exam'), userID, groupID)) {
 				
 				var attempt = this.getNextAttempt(examgr.getValue('exam'), userID);
-				this._debug('inheritScoreRec(): Creating new score record...');
+				gs.debug('inheritScoreRec(): Creating new score record...');
 				this.addScoreRec(examgr.getValue('exam'), userID, groupID, attempt);
 			}
 		}
@@ -632,7 +632,7 @@ Util.prototype = {
 		
 		var score = new GlideRecord(this.scoreTable);
 		
-		this._debug('_activeGroupScoreRecExists(START): examID=' + examID + ' userID=' + userID + ' groupID=' + groupID);
+		gs.debug('_activeGroupScoreRecExists(START): examID=' + examID + ' userID=' + userID + ' groupID=' + groupID);
 		
 		score.addQuery('exam', examID);
 		score.addQuery('user', userID);
@@ -640,7 +640,7 @@ Util.prototype = {
 		score.addQuery('state', 'NOT IN', 'Complete,Canceled');
 		score.query();
 		
-		this._debug('_activeGroupScoreRecExists(): score.getRowCount()=' + score.getRowCount());
+		gs.debug('_activeGroupScoreRecExists(): score.getRowCount()=' + score.getRowCount());
 		
 		return score.hasNext();
 		
@@ -670,10 +670,10 @@ Util.prototype = {
 		
 		score.query();
 		
-		this._debug('_linkActiveUnlinkedScorRec(): score.getRowCount()=' + score.getRowCount());
+		gs.debug('_linkActiveUnlinkedScorRec(): score.getRowCount()=' + score.getRowCount());
 		
 		if (score.next()) {
-			this._debug('_linkActiveUnlinkedScoreRec(): Unlinked record found. Linking: ' + score.user.getDisplayValue() + '/' + score.exam.getDisplayValue() + ' to score rec ' + score.getValue('sys_id'));
+			gs.debug('_linkActiveUnlinkedScoreRec(): Unlinked record found. Linking: ' + score.user.getDisplayValue() + '/' + score.exam.getDisplayValue() + ' to score rec ' + score.getValue('sys_id'));
 			score.setValue('group', groupID);
 			score.update();
 			this.updateExamGroupStateDetails(examID, groupID);
@@ -681,7 +681,7 @@ Util.prototype = {
 			return true;
 		}
 		
-		this._debug('_linkActiveUnlinkedScoreRec(): No unlinked score records found.');
+		gs.debug('_linkActiveUnlinkedScoreRec(): No unlinked score records found.');
 		
 		return false;
 	},
@@ -701,7 +701,7 @@ Util.prototype = {
 		
 		var score = new GlideRecord(this.scoreTable);
 		
-		if (JSUtil.nil(attempt))
+		if (!attempt)
 			attempt = 1;
 		
 		score.newRecord();
@@ -792,15 +792,15 @@ Util.prototype = {
  	*/
 	getAnswerList : function(response) {
 		
-		this._debug('getAnswerList(): Response         =' + response.getDisplayValue());
-		this._debug('getAnswerList(): Score ID         =' + response.score.getDisplayValue());
-		this._debug('getAnswerList(): Exam             =' + response.score.exam.getDisplayValue());
-		this._debug('getAnswerList(): Question         =' + response.question.getDisplayValue());
-		this._debug('getAnswerList(): Randomize answers=' + response.score.exam.randomize_answers);
+		gs.debug('getAnswerList(): Response         =' + response.getDisplayValue());
+		gs.debug('getAnswerList(): Score ID         =' + response.score.getDisplayValue());
+		gs.debug('getAnswerList(): Exam             =' + response.score.exam.getDisplayValue());
+		gs.debug('getAnswerList(): Question         =' + response.question.getDisplayValue());
+		gs.debug('getAnswerList(): Randomize answers=' + response.score.exam.randomize_answers);
 		
 		// Check if this response does not have a map (v1 exam)
 		// Then just use the answers in the default order
-		if (JSUtil.nil(response.answer_map)) {
+		if (!response.answer_map) {
 			return this._getStdAnswers(response);
 		}
 		
@@ -833,7 +833,7 @@ Util.prototype = {
 			aObj.text   = answerGr.getDisplayValue();
 			
 			retVal.push(aObj);
-			this._debug('getStdAnswers(): ' + answerGr.order + ': ' + aObj.text + '=' + aObj.sys_id);
+			gs.debug('getStdAnswers(): ' + answerGr.order + ': ' + aObj.text + '=' + aObj.sys_id);
 		}
 		
 		return retVal;
@@ -851,13 +851,13 @@ Util.prototype = {
 		var qGr   = new GlideRecord(this.questionTable);
 		var aList = []; // Array of answers to save
 		
-		this._debug('putAnswerList(): response=' + response.getDisplayValue());
+		gs.debug('putAnswerList(): response=' + response.getDisplayValue());
 		
 		// Get the question this response points to
 		if (qGr.get(response.question)) {
 			
-			this._debug('putAnswerList(): question=' + qGr.getDisplayValue());
-			this._debug('putAnswerList(): question.force_answer_order=' + qGr.force_answer_order);
+			gs.debug('putAnswerList(): question=' + qGr.getDisplayValue());
+			gs.debug('putAnswerList(): question.force_answer_order=' + qGr.force_answer_order);
 			
 			// Get all answers for this question
 			var aGr = new GlideRecord(this.answerTable);
@@ -866,7 +866,7 @@ Util.prototype = {
 			aGr.addActiveQuery();
 			aGr.orderBy('order');
 			aGr.query();
-			this._debug('putAnswerList(): answer.count=' + aGr.getRowCount());
+			gs.debug('putAnswerList(): answer.count=' + aGr.getRowCount());
 			
 			while (aGr.next()) {
 				var aObj = {};
@@ -878,10 +878,10 @@ Util.prototype = {
 			
 			// Scramble the array - unless question has override set
 			if (!qGr.force_answer_order) {
-				this._debug('putAnswerList(): shuffing answer list...');
+				gs.debug('putAnswerList(): shuffing answer list...');
 				aList = this._shuffle(aList);
 			} else {
-				this._debug('putAnswerList(): retaining standard list order (forced)...');
+				gs.debug('putAnswerList(): retaining standard list order (forced)...');
 			}
 		}
 		
@@ -901,14 +901,14 @@ Util.prototype = {
 		
 		var setState  = 'In Progress';
 		
-		this._debug('updateExamGroupStateDetails: examID=' + examID + ' groupID=' + groupID);
+		gs.debug('updateExamGroupStateDetails: examID=' + examID + ' groupID=' + groupID);
 		
 		// This shouldn't happen, but check anyway
-		if (JSUtil.nil(examID))
+		if (!examID)
 			return;
 		
 		// Not part of a group, this doesn't matter.
-		if (JSUtil.nil(groupID))
+		if (!groupID)
 			return;
 		
 		var examgr = new GlideRecord(this.examGrmemberTable);
@@ -917,7 +917,7 @@ Util.prototype = {
 		examgr.addQuery('group', groupID);
 		examgr.query();
 		
-		// this._debug('updateExamGroupStateDetails(): rows=' + examgr.getRowCount());
+		// gs.debug('updateExamGroupStateDetails(): rows=' + examgr.getRowCount());
 		
 		if (examgr.next()) {
 			
@@ -940,11 +940,11 @@ Util.prototype = {
 				if (state == 'Canceled')
 					state = 'Complete';
 				
-				this._debug('updateExamGroupStateDetails(): exam=' + examgr.exam.getDisplayValue() + ' group=' + examgr.group.getDisplayValue()
+				gs.debug('updateExamGroupStateDetails(): exam=' + examgr.exam.getDisplayValue() + ' group=' + examgr.group.getDisplayValue()
 				+ ' state=' + state + ' count=' + parseInt(count));
 				
 				stateList[state].count = parseInt(count);
-				this._debug('updateExamGroupStateDetails(): stateList[' + state + '].count=' + stateList[state].count);
+				gs.debug('updateExamGroupStateDetails(): stateList[' + state + '].count=' + stateList[state].count);
 				++scoreCount; // Count how many different states were found
 			}
 			
@@ -959,20 +959,20 @@ Util.prototype = {
 			
 			// If only one answer was found, use it
 			if (scoreCount == 1) {
-				this._debug('updateExamGroupStateDetails(): Only one state found. Updating state to: ' + state);
+				gs.debug('updateExamGroupStateDetails(): Only one state found. Updating state to: ' + state);
 				setState = state;
 			}
 			
 			// Crazy state - no score records...
 			if (scoreCount == 0) {
-				this._debug('updateExamGroupStateDetails(): No active states counted. Marking complete.');
+				gs.debug('updateExamGroupStateDetails(): No active states counted. Marking complete.');
 				setState = 'Complete';
 			}
 			
 			// Update the record
 			examgr.state         = setState;
 			examgr.state_details = this._sortStateListByOrder(stateList);
-			this._debug('updateExamGroupStateDetails(): state_details=' + examgr.state_details);
+			gs.debug('updateExamGroupStateDetails(): state_details=' + examgr.state_details);
 			examgr.update();
 		}
 	},
@@ -1001,13 +1001,13 @@ Util.prototype = {
  	*/
 	deleteUserFromGroup : function(userID, groupID) {
 		
-		this._debug('deleteUserFromGroup(START): userID=' + userID + ' groupID=' + groupID);
+		gs.debug('deleteUserFromGroup(START): userID=' + userID + ' groupID=' + groupID);
 		
 		// Standard prelude
-		if (JSUtil.nil(userID))
+		if (userID)
 			return;
 		
-		if (JSUtil.nil(groupID))
+		if (groupID)
 			return;
 		
 		gs.getSession().setStrictQuery(true);
@@ -1017,24 +1017,24 @@ Util.prototype = {
 		
 		if (!group.get(groupID))
 			return;
-		this._debug('deleteUserFromGroup(): group=' + group.getDisplayValue() + ' user_delete_action=' + group.getValue('user_delete_action'));
+		gs.debug('deleteUserFromGroup(): group=' + group.getDisplayValue() + ' user_delete_action=' + group.getValue('user_delete_action'));
 		
 		// If the group is configured to do nothing, then leave
 		if (group.getValue('user_delete_action') == 'nothing') {
-			this._debug('deleteUserFromGroup(): user_delete_action==nothing: returning...');
+			gs.debug('deleteUserFromGroup(): user_delete_action==nothing: returning...');
 			return;
 		}
 		
 		// First find out which exams are tied to this group...
 		var examList = this._getExamGroupListByGroup(groupID);
 		
-		this._debug('deleteUserFromGroup(): ' + examList.length + ' exams impacted');
+		gs.debug('deleteUserFromGroup(): ' + examList.length + ' exams impacted');
 		
 		for (var i = 0; i < examList.length; i++) {
 			// Next find all score records that match what we need
 			var score = new GlideRecord(this.scoreTable);
 			
-			this._debug('deleteUserFromGroup(): examID=' + examList[i] + ' userID=' + userID + ' groupID=' + groupID);
+			gs.debug('deleteUserFromGroup(): examID=' + examList[i] + ' userID=' + userID + ' groupID=' + groupID);
 			
 			score.addQuery('user', userID);
 			score.addQuery('group', groupID);
@@ -1045,20 +1045,20 @@ Util.prototype = {
 			
 			score.query();
 			
-			this._debug('deleteUserFromGroup(): score.getRowCount()=' + score.getRowCount());
+			gs.debug('deleteUserFromGroup(): score.getRowCount()=' + score.getRowCount());
 			
 			while (score.next()) {
 				
 				switch (group.getValue('user_delete_action')) {
 					case 'remove':
 					score.deleteRecord();
-					this._debug('deleteUserFromGroup(): REMOVE ' + score.exam.getDisplayValue() + '/' + score.user.getDisplayValue() + '/' + score.group.getDisplayValue());
+					gs.debug('deleteUserFromGroup(): REMOVE ' + score.exam.getDisplayValue() + '/' + score.user.getDisplayValue() + '/' + score.group.getDisplayValue());
 					// this.updateExamgroupStateDetails() triggered from DELETE BR
 					break;
 					
 					case 'remove_inactive':
 					score.deleteRecord();
-					this._debug('deleteUserFromGroup(): REMOVE INACTIVE ' + score.exam.getDisplayValue() + '/' + score.user.getDisplayValue() + '/' + score.group.getDisplayValue() + '(state=' + score.state + ')');
+					gs.debug('deleteUserFromGroup(): REMOVE INACTIVE ' + score.exam.getDisplayValue() + '/' + score.user.getDisplayValue() + '/' + score.group.getDisplayValue() + '(state=' + score.state + ')');
 					// this.updateExamgroupStateDetails() triggered from DELETE BR
 					break;
 					
@@ -1066,11 +1066,11 @@ Util.prototype = {
 					score.setValue('group', '');
 					score.update();
 					this.updateExamGroupStateDetails(examList[i], groupID);
-					this._debug('deleteUserFromGroup(): UNLINK ' + score.exam.getDisplayValue() + '/' + score.user.getDisplayValue() + '/' + score.group.getDisplayValue());
+					gs.debug('deleteUserFromGroup(): UNLINK ' + score.exam.getDisplayValue() + '/' + score.user.getDisplayValue() + '/' + score.group.getDisplayValue());
 					break;
 					
 					default:
-					this._debug('deleteUserFromGroup(): DEFAULT ' + score.exam.getDisplayValue() + '/' + score.user.getDisplayValue() + '/' + score.group.getDisplayValue());
+					gs.debug('deleteUserFromGroup(): DEFAULT ' + score.exam.getDisplayValue() + '/' + score.user.getDisplayValue() + '/' + score.group.getDisplayValue());
 				}
 			}
 		}
@@ -1099,7 +1099,7 @@ Util.prototype = {
 		targetName = this._makeNewExamName(sourceExam);
 		
 		targetExam.name = targetName;
-		this._debug('copyExam(): Creating exam copy: ' + targetName);
+		gs.debug('copyExam(): Creating exam copy: ' + targetName);
 		
 		// Copy all the fields above from the source record to the target record
 		for (var i = 0; i < examFields.length; i++) {
@@ -1136,17 +1136,17 @@ Util.prototype = {
 		if (match != null) {
 			base = match[1];
 			count = parseInt(match[2]);
-			// this._debug('_makeNewExamName(): number suffix found. base=' + base + ' count=' + count);
+			// gs.debug('_makeNewExamName(): number suffix found. base=' + base + ' count=' + count);
 		}
 		
 		do {
 			++count;
 			var result = base + '_' + count;
-			// this._debug('_makeNewExamName(): Testing: ' + result);
+			// gs.debug('_makeNewExamName(): Testing: ' + result);
 			
 		} while (gr.get('name', result));
 		
-		// this._debug('_makeNewExamName(): Looks like: ' + result + ' is available.');
+		// gs.debug('_makeNewExamName(): Looks like: ' + result + ' is available.');
 		
 		return result;
 	},
@@ -1170,9 +1170,9 @@ Util.prototype = {
 		sourceQuestion.query();
 		
 		while (sourceQuestion.next()) {
-			// this._debug('Creating question copy:' + sourceQuestion.getValue('order') + ' sys_id=' + sourceQuestion.getValue('sys_id'));
+			// gs.debug('Creating question copy:' + sourceQuestion.getValue('order') + ' sys_id=' + sourceQuestion.getValue('sys_id'));
 			var targetQuestionID = this._copyQuestion(sourceQuestion, targetExamID);
-			// this._debug('----Target Question ID=' + targetQuestionID);
+			// gs.debug('----Target Question ID=' + targetQuestionID);
 		}
 	},
 	
@@ -1200,7 +1200,7 @@ Util.prototype = {
 		}
 		
 		targetQuestionID = targetQuestion.insert();
-		// this._debug('----_copyQuestion(): targetQuestionID=' + targetQuestionID);
+		// gs.debug('----_copyQuestion(): targetQuestionID=' + targetQuestionID);
 		
 		this._copyAnswers(sourceQuestion.getValue('sys_id'), targetQuestionID);
 		
@@ -1225,9 +1225,9 @@ Util.prototype = {
 		sourceAnswer.query();
 		
 		while (sourceAnswer.next()) {
-			// this._debug('----Creating answer copy:' + sourceAnswer.getValue('order') + ' sys_id=' + sourceAnswer.getValue('sys_id'));
+			// gs.debug('----Creating answer copy:' + sourceAnswer.getValue('order') + ' sys_id=' + sourceAnswer.getValue('sys_id'));
 			this. _copyAnswer(sourceAnswer, targetQuestionID);
-			// this._debug('----Target Question ID=' + targetQuestionID);
+			// gs.debug('----Target Question ID=' + targetQuestionID);
 		}
 	},
 	
@@ -1247,12 +1247,12 @@ Util.prototype = {
 		var targetAnswer = new GlideRecord('exam_answer');
 		
 		targetAnswer.newRecord();
-		// this._debug('------_copyAnswer(): targetQuestionID=' + targetQuestionID);
+		// gs.debug('------_copyAnswer(): targetQuestionID=' + targetQuestionID);
 		
 		targetAnswer.setValue('question', targetQuestionID);
 		
 		for (var i = 0; i < aFields.length; i++) {
-			// this._debug('------answer.' + aFields[i] + '=' + sourceAnswer.getValue(aFields[i]));
+			// gs.debug('------answer.' + aFields[i] + '=' + sourceAnswer.getValue(aFields[i]));
 			targetAnswer.setValue(aFields[i], sourceAnswer.getValue(aFields[i]));
 		}
 		
@@ -1280,7 +1280,7 @@ Util.prototype = {
 			answer.push(examgr.getValue('exam'));
 		}
 		
-		// this._debug('getExamGroupListByGroup(): answer=' + answer.join(','));
+		// gs.debug('getExamGroupListByGroup(): answer=' + answer.join(','));
 		
 		return answer;
 	},
@@ -1364,7 +1364,7 @@ Util.prototype = {
 			return gr;
 			
 		} else {
-			this._debug('_getExamRec(): ERROR - cannot read exam record');
+			gs.debug('_getExamRec(): ERROR - cannot read exam record');
 			return NULL;
 		}
 	},
@@ -1378,13 +1378,13 @@ Util.prototype = {
  	*/
 	_dumpExamRec : function(examRec) {
 		
-		this._debug('_dumpExamRec(): *************************************');
-		this._debug('_dumpExamRec(): examRec.name=         ' + examRec.getValue('name'));
-		this._debug('_dumpExamRec(): examRec.sys_id=       ' + examRec.getValue('sys_id'));
-		this._debug('_dumpExamRec(): examRec.randomize=    ' + examRec.getValue('randomize'));
-		this._debug('_dumpExamRec(): examRec.min_score=    ' + examRec.getValue('min_score'));
-		this._debug('_dumpExamRec(): examRec.max_questions=' + examRec.getValue('max_questions'));
-		this._debug('_dumpExamRec(): *************************************');
+		gs.debug('_dumpExamRec(): *************************************');
+		gs.debug('_dumpExamRec(): examRec.name=         ' + examRec.getValue('name'));
+		gs.debug('_dumpExamRec(): examRec.sys_id=       ' + examRec.getValue('sys_id'));
+		gs.debug('_dumpExamRec(): examRec.randomize=    ' + examRec.getValue('randomize'));
+		gs.debug('_dumpExamRec(): examRec.min_score=    ' + examRec.getValue('min_score'));
+		gs.debug('_dumpExamRec(): examRec.max_questions=' + examRec.getValue('max_questions'));
+		gs.debug('_dumpExamRec(): *************************************');
 		
 	},
 	
@@ -1400,18 +1400,18 @@ Util.prototype = {
 		
 		var ga = new GlideAggregate(this.questionTable);
 		
-		this._debug('_checkDupes(): looking for duplicate: ' + element);
+		gs.debug('_checkDupes(): looking for duplicate: ' + element);
 		
 		ga.addAggregate('COUNT', element);
 		ga.addQuery('exam', exam_id);
 		ga.query();
 		
 		while (ga.next()) {
-			var fPrime = eval('ga.' + element);
+			// var fPrime = eval('ga.' + element);
 			var count = ga.getAggregate('COUNT', element);
 			
 			if (count > 1) {
-				this._debug('_hasDupes(): duplicate ' + element + ' found');
+				gs.debug('_hasDupes(): duplicate ' + element + ' found');
 				return true;
 			}
 		}
@@ -1447,7 +1447,7 @@ Util.prototype = {
         <sys_created_on>2016-11-13 15:02:43</sys_created_on>
         <sys_customer_update>true</sys_customer_update>
         <sys_id>e83393bddb07e2002e38711ebf96197c</sys_id>
-        <sys_mod_count>0</sys_mod_count>
+        <sys_mod_count>4</sys_mod_count>
         <sys_name>Util</sys_name>
         <sys_package display_value="Exam Manager" source="x_snc_exam">1d8ae19913c722001098b5f12244b098</sys_package>
         <sys_policy>read</sys_policy>
@@ -1455,6 +1455,6 @@ Util.prototype = {
         <sys_scope display_value="Exam Manager">1d8ae19913c722001098b5f12244b098</sys_scope>
         <sys_update_name>sys_script_include_e83393bddb07e2002e38711ebf96197c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2016-11-13 15:02:43</sys_updated_on>
+        <sys_updated_on>2016-11-15 16:58:50</sys_updated_on>
     </sys_script_include>
 </record_update>
