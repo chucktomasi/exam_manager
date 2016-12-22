@@ -8,7 +8,7 @@
         <sys_class_name>sys_ui_message</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2016-11-15 16:57:07</sys_created_on>
-        <sys_customer_update>true</sys_customer_update>
+        <sys_customer_update>false</sys_customer_update>
         <sys_id>3c03c2aedb4326002e38711ebf96197b</sys_id>
         <sys_mod_count>0</sys_mod_count>
         <sys_name>x_snc_exam_percent_complete</sys_name>

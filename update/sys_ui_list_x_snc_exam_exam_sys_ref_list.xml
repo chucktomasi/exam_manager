@@ -4,7 +4,7 @@
         <sys_ui_list_element action="INSERT_OR_UPDATE">
             <average_value>false</average_value>
             <element>name</element>
-            <list_id display_value="x_snc_exam_exam" element="NULL" name="x_snc_exam_exam" parent="NULL" relationship="NULL" sys_domain="global" view="6d402630db1222002e38711ebf96197e">1496d3fddb07e2002e38711ebf96199e</list_id>
+            <list_id display_value="x_snc_exam_exam" element="NULL" name="x_snc_exam_exam" parent="NULL" relationship="NULL" sys_domain="global" view="946f2430673212004ce75bb557415a7e">1496d3fddb07e2002e38711ebf96199e</list_id>
             <max_value>false</max_value>
             <min_value>false</min_value>
             <position>0</position>
@@ -29,7 +29,7 @@
             <sys_class_name>sys_ui_list</sys_class_name>
             <sys_created_by>admin</sys_created_by>
             <sys_created_on>2016-11-13 15:06:43</sys_created_on>
-            <sys_customer_update>true</sys_customer_update>
+            <sys_customer_update>false</sys_customer_update>
             <sys_domain>global</sys_domain>
             <sys_domain_path>/</sys_domain_path>
             <sys_id>1496d3fddb07e2002e38711ebf96199e</sys_id>
@@ -43,7 +43,7 @@
             <sys_updated_by>admin</sys_updated_by>
             <sys_updated_on>2016-11-13 15:06:43</sys_updated_on>
             <sys_user/>
-            <view display_value="Reference List" name="sys_ref_list">6d402630db1222002e38711ebf96197e</view>
+            <view display_value="Reference List" name="sys_ref_list">946f2430673212004ce75bb557415a7e</view>
             <view_name/>
         </sys_ui_list>
     </sys_ui_list>

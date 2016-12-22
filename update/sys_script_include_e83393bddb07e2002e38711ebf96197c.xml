@@ -1089,11 +1089,11 @@ Util.prototype = {
 		
 		var examFields = ['active', 'administrator', 'fail_notification', 'max_questions',
 		'max_retries', 'min_score', 'notify_admin_on_fail', 'notify_admin_on_pass',
-		'notify_user_on_fail', 'notify_user_on_pass', 'notify_when_ready', 'pass_notification',
-		'randomize', 'randomize_answers', 'ready_notification', 'review_on_complete',
-		'short_description', 'show_answers', 'show_score'];
+		'notify_user_on_fail', 'notify_user_on_pass', 'notify_user_when_ready', 'pass_notification',
+		'randomize_questions', 'randomize_answers', 'ready_notification', 'review_on_complete',
+		'short_description', 'show_answers_on_fail', 'show_score'];
 		
-		targetExam = new GlideRecord('exam');
+		targetExam = new GlideRecord(this.examTable);
 		
 		targetExam.newRecord();
 		targetName = this._makeNewExamName(sourceExam);
@@ -1447,7 +1447,7 @@ Util.prototype = {
         <sys_created_on>2016-11-13 15:02:43</sys_created_on>
         <sys_customer_update>true</sys_customer_update>
         <sys_id>e83393bddb07e2002e38711ebf96197c</sys_id>
-        <sys_mod_count>4</sys_mod_count>
+        <sys_mod_count>6</sys_mod_count>
         <sys_name>Util</sys_name>
         <sys_package display_value="Exam Manager" source="x_snc_exam">1d8ae19913c722001098b5f12244b098</sys_package>
         <sys_policy>read</sys_policy>
@@ -1455,6 +1455,6 @@ Util.prototype = {
         <sys_scope display_value="Exam Manager">1d8ae19913c722001098b5f12244b098</sys_scope>
         <sys_update_name>sys_script_include_e83393bddb07e2002e38711ebf96197c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2016-11-15 16:58:50</sys_updated_on>
+        <sys_updated_on>2016-11-18 05:03:24</sys_updated_on>
     </sys_script_include>
 </record_update>

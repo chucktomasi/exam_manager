@@ -30,7 +30,7 @@
         <role_conditions/>
         <script><![CDATA[(function executeRule(current, previous /*null when async*/) {
 
-	new ExamUtil().deleteScoreList(current.getValue('exam'), current.getValue('group'));
+	new Util().deleteScoreList(current.getValue('exam'), current.getValue('group'));
 
 })(current, previous);]]></script>
         <sys_class_name>sys_script</sys_class_name>
@@ -40,7 +40,7 @@
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>8db834cadb87e2002e38711ebf9619bd</sys_id>
-        <sys_mod_count>0</sys_mod_count>
+        <sys_mod_count>1</sys_mod_count>
         <sys_name>Delete score recs</sys_name>
         <sys_overrides/>
         <sys_package display_value="Exam Manager" source="x_snc_exam">1d8ae19913c722001098b5f12244b098</sys_package>
@@ -49,7 +49,7 @@
         <sys_scope display_value="Exam Manager">1d8ae19913c722001098b5f12244b098</sys_scope>
         <sys_update_name>sys_script_8db834cadb87e2002e38711ebf9619bd</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2016-11-13 22:16:15</sys_updated_on>
+        <sys_updated_on>2016-11-20 20:25:58</sys_updated_on>
         <template/>
         <when>after</when>
     </sys_script>

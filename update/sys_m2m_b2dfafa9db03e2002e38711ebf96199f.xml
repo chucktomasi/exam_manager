@@ -10,7 +10,7 @@
         <sys_class_name>sys_m2m</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2016-11-12 22:19:57</sys_created_on>
-        <sys_customer_update>true</sys_customer_update>
+        <sys_customer_update>false</sys_customer_update>
         <sys_id>b2dfafa9db03e2002e38711ebf96199f</sys_id>
         <sys_mod_count>0</sys_mod_count>
         <sys_name>x_snc_exam_group_grmember</sys_name>

@@ -2,21 +2,21 @@
 <record_update table="ua_table_licensing_config">
     <ua_table_licensing_config action="INSERT_OR_UPDATE">
         <is_fulfillment>false</is_fulfillment>
-        <name>x_snc_exam_question</name>
+        <name>x_snc_exam_answer</name>
         <owner_condition/>
         <sys_class_name>ua_table_licensing_config</sys_class_name>
         <sys_created_by>admin</sys_created_by>
-        <sys_created_on>2016-11-12 01:58:38</sys_created_on>
+        <sys_created_on>2016-11-12 02:01:52</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
-        <sys_id>28182121db8fa2002e38711ebf9619a9</sys_id>
+        <sys_id>f7e1274367032200ca735bb557415ac4</sys_id>
         <sys_mod_count>0</sys_mod_count>
-        <sys_name>x_snc_exam_question</sys_name>
+        <sys_name>x_snc_exam_answer</sys_name>
         <sys_package display_value="Exam Manager" source="x_snc_exam">1d8ae19913c722001098b5f12244b098</sys_package>
         <sys_policy/>
         <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
         <sys_scope display_value="Exam Manager">1d8ae19913c722001098b5f12244b098</sys_scope>
-        <sys_update_name>ua_table_licensing_config_28182121db8fa2002e38711ebf9619a9</sys_update_name>
+        <sys_update_name>ua_table_licensing_config_f7e1274367032200ca735bb557415ac4</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2016-11-12 01:58:38</sys_updated_on>
+        <sys_updated_on>2016-11-12 02:01:52</sys_updated_on>
     </ua_table_licensing_config>
 </record_update>

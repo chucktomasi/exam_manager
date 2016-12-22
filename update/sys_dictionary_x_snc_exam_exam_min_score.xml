@@ -51,17 +51,17 @@
         <sys_class_name>sys_dictionary</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2016-11-11 18:57:31</sys_created_on>
-        <sys_customer_update>true</sys_customer_update>
-        <sys_id>d4182121db8fa2002e38711ebf961978</sys_id>
-        <sys_mod_count>1</sys_mod_count>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>ffe1274367032200ca735bb557415acb</sys_id>
+        <sys_mod_count>0</sys_mod_count>
         <sys_name>Min score</sys_name>
         <sys_package display_value="Exam Manager" source="x_snc_exam">1d8ae19913c722001098b5f12244b098</sys_package>
         <sys_policy/>
         <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
         <sys_scope display_value="Exam Manager">1d8ae19913c722001098b5f12244b098</sys_scope>
         <sys_update_name>sys_dictionary_x_snc_exam_exam_min_score</sys_update_name>
-        <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2016-11-12 23:00:43</sys_updated_on>
+        <sys_updated_by>system</sys_updated_by>
+        <sys_updated_on>2016-11-17 13:09:17</sys_updated_on>
         <table_reference>false</table_reference>
         <text_index>false</text_index>
         <unique>false</unique>

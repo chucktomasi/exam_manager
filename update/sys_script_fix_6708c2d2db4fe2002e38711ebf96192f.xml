@@ -464,7 +464,7 @@ for (var i = 0; i < map.length; i++) {
         <sys_class_name>sys_script_fix</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2016-11-14 22:46:33</sys_created_on>
-        <sys_customer_update>true</sys_customer_update>
+        <sys_customer_update>false</sys_customer_update>
         <sys_id>6708c2d2db4fe2002e38711ebf96192f</sys_id>
         <sys_mod_count>3</sys_mod_count>
         <sys_name>Exam Migration</sys_name>

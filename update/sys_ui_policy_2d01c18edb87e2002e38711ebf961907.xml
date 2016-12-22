@@ -26,7 +26,7 @@
         <sys_class_name>sys_ui_policy</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2016-11-13 22:52:27</sys_created_on>
-        <sys_customer_update>true</sys_customer_update>
+        <sys_customer_update>false</sys_customer_update>
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>2d01c18edb87e2002e38711ebf961907</sys_id>

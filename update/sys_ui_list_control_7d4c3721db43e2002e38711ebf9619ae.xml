@@ -2,7 +2,6 @@
 <record_update sys_domain="global" table="sys_ui_list_control">
     <sys_ui_list_control action="INSERT_OR_UPDATE">
         <columns_condition/>
-        <disable_listv3>false</disable_listv3>
         <edit_condition/>
         <edit_default_filter/>
         <edit_roles/>
@@ -16,7 +15,6 @@
         <list_edit_insert_row>false</list_edit_insert_row>
         <list_edit_ref_qual_tag/>
         <list_edit_type/>
-        <mode>grid</mode>
         <name>x_snc_exam_exam</name>
         <new_condition/>
         <new_roles/>
@@ -28,11 +26,10 @@
         <omit_links>false</omit_links>
         <omit_new_button>true</omit_new_button>
         <related_list>x_snc_exam_score.exam</related_list>
-        <search_method>keywords</search_method>
         <sys_class_name>sys_ui_list_control</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2016-11-12 23:13:07</sys_created_on>
-        <sys_customer_update>true</sys_customer_update>
+        <sys_customer_update>false</sys_customer_update>
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>7d4c3721db43e2002e38711ebf9619ae</sys_id>
