@@ -95,7 +95,7 @@
             <sys_domain>global</sys_domain>
             <sys_domain_path>/</sys_domain_path>
             <sys_id>f7c8f7addb03e2002e38711ebf961991</sys_id>
-            <sys_mod_count>0</sys_mod_count>
+            <sys_mod_count>1</sys_mod_count>
             <sys_name>x_snc_exam_exam</sys_name>
             <sys_overrides/>
             <sys_package display_value="Exam Manager" source="x_snc_exam">1d8ae19913c722001098b5f12244b098</sys_package>
@@ -104,7 +104,7 @@
             <sys_scope display_value="Exam Manager">1d8ae19913c722001098b5f12244b098</sys_scope>
             <sys_update_name>sys_ui_form_sections_f7c8f7addb03e2002e38711ebf961991</sys_update_name>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2016-11-12 22:57:52</sys_updated_on>
+            <sys_updated_on>2016-12-22 22:05:33</sys_updated_on>
             <sys_user/>
             <view display_value="Default view" name="NULL">Default view</view>
             <view_name/>
